@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CoolToolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <!--<item name="app:layout_constraintLeft_toLeftOf">parent</item>-->
+        <!--<item name="app:layout_constraintRight_toRightOf">parent</item>-->
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="android:navigationIcon">?attr/homeAsUpIndicator</item>
+        <item name="android:elevation">4dp</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <!--<item name="android:layout_marginBottom">0dp</item>-->
+    </style>
+
+    <style name="CoolToolbarTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text"></item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
+    </style>
+</resources>
