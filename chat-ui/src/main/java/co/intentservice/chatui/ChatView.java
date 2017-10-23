@@ -365,6 +365,11 @@ public class ChatView extends RelativeLayout {
             chatViewListAdapter.addMessage(chatMessage);
             inputEditText.setText("");
         }
+        else{
+            chatMessage.setType(Type.RECEIVED);
+            chatViewListAdapter.addMessage(chatMessage);
+            inputEditText.setText("");
+        }
     }
 
     public void addMessage(ChatMessage chatMessage) {
