@@ -8,14 +8,15 @@
     android:paddingStart="16dp"
     android:paddingLeft="16dp"
     android:paddingEnd="72dp"
-    android:paddingRight="72dp">
+    android:paddingRight="72dp"
+    android:background="@color/off_white">
 
     <android.support.v7.widget.CardView
         android:id="@+id/bubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        app:cardBackgroundColor="@color/default_bubble_color_rcv"
+        app:cardBackgroundColor="@color/u_blue"
         app:cardCornerRadius="8dp"
         app:cardUseCompatPadding="true">
 
