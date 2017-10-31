@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
-        intent.putExtra(CHANNEL_MESSAGE, "CHANNEL 1");
+        intent.putExtra(CHANNEL_MESSAGE, "CHANNEL " + message);
         startActivity(intent);
     }
 }
