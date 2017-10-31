@@ -31,12 +31,12 @@ public class ChatActivity extends AppCompatActivity {
                 "Message received", System.currentTimeMillis(), ChatMessage.Type.RECEIVED));
 
         chatView.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
-            int i = 0;
+//            int i = 0;
             @Override
             public boolean sendMessage(ChatMessage chatMessage) {
-                if (++i % 2 == 0){
-                    return false;
-                }
+//                if (++i % 2 == 0){
+//                    return false;
+//                }
                 return true;
             }
         });
