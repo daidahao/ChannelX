@@ -55,6 +55,7 @@ dependencies {
     compile "com.android.support:design:${supportLibVer}"
 
     compile 'pl.tajchert:waitingdots:0.2.0'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }
 
 
