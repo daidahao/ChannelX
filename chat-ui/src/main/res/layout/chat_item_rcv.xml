@@ -18,13 +18,29 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/profile_image"
+        <LinearLayout
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/profile4"
-            app:civ_border_color="#FF000000"
-            app:civ_border_width="0dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/profile_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_account_circle_black_48dp"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="0dp" />
+
+            <include
+                android:id="@+id/username_text_view"
+                layout="@layout/username_textview"/>
+
+
+        </LinearLayout>
+
+
 
         <android.support.v7.widget.CardView
             android:id="@+id/bubble"

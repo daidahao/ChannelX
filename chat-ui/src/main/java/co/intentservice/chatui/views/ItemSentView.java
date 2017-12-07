@@ -20,7 +20,7 @@ import co.intentservice.chatui.R;
 public class ItemSentView extends MessageView {
 
     private CardView bubble;
-    private TextView messageTextView, timestampTextView;
+    private TextView messageTextView, timestampTextView, usernameTextView;
 
 
     /**
@@ -86,6 +86,16 @@ public class ItemSentView extends MessageView {
 
         bubble.setCardElevation(elevation);
 
+    }
+
+    @Override
+    public void setUsername(String username) {
+
+        if (usernameTextView == null) {
+            usernameTextView = (TextView) findViewById(R.id.username_text_view);
+        }
+
+        usernameTextView.setText(username);
     }
 
     /**

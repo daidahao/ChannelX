@@ -38,6 +38,11 @@ public abstract class MessageView extends FrameLayout {
      */
     public abstract void setElevation(float elevation);
 
+    /*
+        设置消息的用户名
+     */
+    public abstract void setUsername(String username);
+
     /**
      * Constructs a new message view.
      * @param context

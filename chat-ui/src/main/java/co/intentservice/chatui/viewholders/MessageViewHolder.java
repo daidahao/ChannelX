@@ -71,4 +71,8 @@ public class MessageViewHolder {
 
     }
 
+    public void setUsername(String username) {
+        messageView.setUsername(username);
+    }
+
 }

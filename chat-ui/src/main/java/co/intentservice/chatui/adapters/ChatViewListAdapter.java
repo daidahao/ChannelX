@@ -92,6 +92,7 @@ public class ChatViewListAdapter extends BaseAdapter {
         holder.setMessage(chatMessages.get(position).getMessage());
         holder.setTimestamp(chatMessages.get(position).findFormattedTime());
         holder.setElevation(bubbleElevation);
+        holder.setUsername(chatMessages.get(position).findUsername());
         holder.setBackground(type);
 
         return convertView;

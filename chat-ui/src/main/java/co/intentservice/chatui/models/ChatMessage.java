@@ -74,6 +74,13 @@ public class ChatMessage {
                 : DateFormat.format("dd MMM - hh:mm a", timestamp).toString();
     }
 
+    public String findUsername() {
+        if (type == Type.SENT) {
+            return "Me";
+        }
+        return "UNKNOWN";
+    }
+
     public String getUserid() {
         return userid;
     }
