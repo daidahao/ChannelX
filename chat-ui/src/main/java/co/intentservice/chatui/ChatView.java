@@ -360,10 +360,10 @@ public class ChatView extends RelativeLayout {
 
     private void sendMessage(String message, long stamp) {
 
-        ChatMessage chatMessage = new ChatMessage(message, stamp, Type.SENT);
+        ChatMessage chatMessage = new ChatMessage(message, stamp);
         if (onSentMessageListener != null && onSentMessageListener.sendMessage(chatMessage)) {
-            chatViewListAdapter.addMessage(chatMessage);
-            inputEditText.setText("");
+//            chatViewListAdapter.addMessage(chatMessage);
+//            inputEditText.setText("");
         }
         else{
             /*
@@ -373,6 +373,10 @@ public class ChatView extends RelativeLayout {
 //            chatViewListAdapter.addMessage(chatMessage);
 //            inputEditText.setText("");
         }
+    }
+
+    public void clearInput() {
+        inputEditText.setText("");
     }
 
     public void addMessage(ChatMessage chatMessage) {

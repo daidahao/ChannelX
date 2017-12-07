@@ -15,6 +15,22 @@ public class ChatMessage {
     private String message;
     private long timestamp;
     private Type type;
+    private String userid;
+
+    public ChatMessage() {
+
+    }
+
+    public ChatMessage(String message, long timestamp, String userid) {
+        this.message = message;
+        this.timestamp = timestamp;
+        this.userid = userid;
+    }
+
+    public ChatMessage(String message, long timestamp) {
+        this.message = message;
+        this.timestamp = timestamp;
+    }
 
     public ChatMessage(String message, long timestamp, Type type){
         this.message = message;
@@ -47,7 +63,7 @@ public class ChatMessage {
     }
 
 
-    public String getFormattedTime(){
+    public String findFormattedTime(){
 
         long oneDayInMillis = TimeUnit.DAYS.toMillis(1); // 24 * 60 * 60 * 1000;
 
@@ -56,6 +72,14 @@ public class ChatMessage {
         return timeDifference < oneDayInMillis
                 ? DateFormat.format("hh:mm a", timestamp).toString()
                 : DateFormat.format("dd MMM - hh:mm a", timestamp).toString();
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
     public enum Type {

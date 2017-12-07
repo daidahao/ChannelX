@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -43,23 +44,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        // 检验当前是否登陆
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         Log.d("onStart", "onStart is activated.");
 
         if (mUser == null) {
             Log.d("onStart", "user is null.");
-            // 选择登陆验证方式
-            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-            );
-            // 创建并启动登陆Intent
-            AuthUI authUI = AuthUI.getInstance();
-            AuthUI.SignInIntentBuilder signInIntentBuilder = authUI.createSignInIntentBuilder();
-            signInIntentBuilder.setAvailableProviders(providers);
-            signInIntentBuilder.setIsSmartLockEnabled(false);
-            Intent intent = signInIntentBuilder.build();
-            startActivityForResult(intent, RC_SIGN_IN);
+            login();
         }
         else {
             Log.d("onStart", mUser.getEmail());
@@ -84,10 +76,26 @@ public class MainActivity extends AppCompatActivity {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-
+                        Log.d("signout", "signout successfully!");
                     }
                 }
         );
+        login();
+    }
+
+    public void login() {
+        // 选择登陆验证方式
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()
+        );
+        // 创建并启动登陆Intent
+        AuthUI authUI = AuthUI.getInstance();
+        AuthUI.SignInIntentBuilder signInIntentBuilder = authUI.createSignInIntentBuilder();
+        signInIntentBuilder.setAvailableProviders(providers);
+        signInIntentBuilder.setIsSmartLockEnabled(false);
+        Intent intent = signInIntentBuilder.build();
+        startActivityForResult(intent, RC_SIGN_IN);
     }
 
     @Override
