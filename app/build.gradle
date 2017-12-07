@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "sustech.unknown.channelx"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -29,4 +29,12 @@ dependencies {
     //    compile 'co.intentservice.android-chat-ui:chat-ui:0.1.1'
     testCompile 'junit:junit:4.12'
     compile project(':chat-ui')
+
+//    compile 'com.google.firebase:firebase-core:11.6.2'
+
+    compile 'com.firebaseui:firebase-ui-auth:3.1.0'
+
+
 }
+
+apply plugin: 'com.google.gms.google-services'
