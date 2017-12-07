@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
 
-import co.intentservice.chatui.R;
 import co.intentservice.chatui.models.ChatMessage;
 import co.intentservice.chatui.viewholders.MessageViewHolder;
 import co.intentservice.chatui.views.ViewBuilder;
@@ -91,7 +90,7 @@ public class ChatViewListAdapter extends BaseAdapter {
         }
 
         holder.setMessage(chatMessages.get(position).getMessage());
-        holder.setTimestamp(chatMessages.get(position).getFormattedTime());
+        holder.setTimestamp(chatMessages.get(position).findFormattedTime());
         holder.setElevation(bubbleElevation);
         holder.setBackground(type);
 
