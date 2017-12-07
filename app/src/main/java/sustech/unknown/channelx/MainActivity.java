@@ -1,6 +1,7 @@
 package sustech.unknown.channelx;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,8 @@ import android.widget.EditText;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -42,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+        Log.d("onStart", "onStart is activated.");
+
         if (mUser == null) {
+            Log.d("onStart", "user is null.");
             // 选择登陆验证方式
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = signInIntentBuilder.build();
             startActivityForResult(intent, RC_SIGN_IN);
         }
+        else {
+            Log.d("onStart", mUser.getEmail());
+        }
 
     }
 
@@ -65,6 +74,20 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message);
         intent.putExtra(CHANNEL_MESSAGE, "CHANNEL " + message);
         startActivity(intent);
+    }
+
+    // 注销方法
+    public void signout(View view) {
+        mAuth.signOut();
+        AuthUI authUI = AuthUI.getInstance();
+        authUI.delete(this).addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                    }
+                }
+        );
     }
 
     @Override
