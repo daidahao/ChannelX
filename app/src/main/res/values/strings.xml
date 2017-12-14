@@ -2,4 +2,8 @@
     <string name="app_name">ChannelX</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+    <string name="create_channel">Create Channel</string>
+    <string name="create_channe_hint">Enter a name</string>
+    <string name="join_channel">Join Channel</string>
+    <string name="join_channel_hint">Enter an ID</string>
 </resources>

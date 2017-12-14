@@ -377,6 +377,11 @@ public class ChatView extends RelativeLayout {
 
     public void clearInput() {
         inputEditText.setText("");
+        inputEditText.setEnabled(true);
+    }
+
+    public void disableInput() {
+        inputEditText.setEnabled(false);
     }
 
     public void addMessage(ChatMessage chatMessage) {
@@ -402,6 +407,8 @@ public class ChatView extends RelativeLayout {
     public FloatingActionsMenu getActionsMenu() {
         return actionsMenu;
     }
+
+
 
 
     public interface TypingListener {

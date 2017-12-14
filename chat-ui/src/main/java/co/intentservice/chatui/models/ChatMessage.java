@@ -16,6 +16,7 @@ public class ChatMessage {
     private long timestamp;
     private Type type;
     private String userid;
+    private String nickname;
 
     public ChatMessage() {
 
@@ -74,12 +75,12 @@ public class ChatMessage {
                 : DateFormat.format("dd MMM - hh:mm a", timestamp).toString();
     }
 
-    public String findUsername() {
-        if (type == Type.SENT) {
-            return "Me";
-        }
-        return "UNKNOWN";
-    }
+//    public String findUsername() {
+//        if (type == Type.SENT) {
+//            return "Me";
+//        }
+//        return "UNKNOWN";
+//    }
 
     public String getUserid() {
         return userid;
@@ -87,6 +88,14 @@ public class ChatMessage {
 
     public void setUserid(String userid) {
         this.userid = userid;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public enum Type {

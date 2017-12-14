@@ -9,9 +9,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -30,6 +28,8 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
 
+    private String channelKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,9 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(intent.getStringExtra(MainActivity.CHANNEL_MESSAGE));
+        toolbarTitle.setText(intent.getStringExtra(MainActivity.CHANNEL_NAME_MESSAGE));
+
+        channelKey = intent.getStringExtra(MainActivity.CHANNEL_KEY_MESSAGE);
 
         // 获取当前登陆的用户
         mAuth = FirebaseAuth.getInstance();
@@ -51,7 +53,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // 初始化数据库
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mMessageReference = mDatabase.child("message");
+        mMessageReference = mDatabase.child("channel").child(channelKey).child("messages");
 
         final ChatView chatView = (ChatView) findViewById(R.id.chat_view);
 
@@ -85,7 +87,10 @@ public class ChatActivity extends AppCompatActivity {
             public boolean sendMessage(ChatMessage chatMessage) {
                 // 将消息添加至message中
                 chatMessage.setUserid(mUser.getUid());
+                chatMessage.setNickname(mUser.getDisplayName());
                 DatabaseReference child = mMessageReference.push();
+                // 暂时禁用输入框
+                chatView.disableInput();
                 // 在写入成功时触发监听器，清楚输入框的内容
                 child.setValue(chatMessage).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -100,14 +105,9 @@ public class ChatActivity extends AppCompatActivity {
 
         chatView.setTypingListener(new ChatView.TypingListener() {
             @Override
-            public void userStartedTyping() {
-
-            }
-
+            public void userStartedTyping() {}
             @Override
-            public void userStoppedTyping() {
-
-            }
+            public void userStoppedTyping() {}
         });
 
     }

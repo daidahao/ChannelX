@@ -1,38 +1,44 @@
 package sustech.unknown.channelx;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.ResultCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 import java.util.List;
 
+import sustech.unknown.channelx.model.Channel;
+
 public class MainActivity extends AppCompatActivity {
-    public static final String EXTRA_MESSAGE = "sustech.unknown.channelx.chat.EXTRA";
-    public static final String CHANNEL_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL";
+    public static final String CHANNEL_KEY_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL_KEY";
+    public static final String CHANNEL_NAME_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL_NAME";
 
     private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
 
+    private DatabaseReference mDatabase, mChannelReference;
+    private String channelKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
 
@@ -59,13 +65,42 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void sendMessage(View view) {
+    public void joinChannel() {
         Intent intent = new Intent(this, ChatActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
+        EditText editText = (EditText) findViewById(R.id.nameText);
         String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        intent.putExtra(CHANNEL_MESSAGE, "CHANNEL " + message);
+        intent.putExtra(CHANNEL_NAME_MESSAGE, "CHANNEL " + message);
+        intent.putExtra(CHANNEL_KEY_MESSAGE, channelKey);
         startActivity(intent);
+    }
+
+    public void OnCreateChannel(View view) {
+        // 初始化数据库
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mChannelReference = mDatabase.child("channel");
+
+        EditText nameText = (EditText) findViewById(R.id.nameText);
+
+        DatabaseReference channelChild = mChannelReference.push();
+        Channel channel = new Channel();
+        channel.setName(nameText.getText().toString());
+        channel.setCreatorId(mUser.getUid());
+        channel.setStartTime(System.currentTimeMillis());
+        channelKey = channelChild.getKey();
+        channelChild.setValue(channel).addOnSuccessListener(
+                new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                joinChannel();
+            }
+        });
+
+    }
+
+    public void OnJoinChannel(View view) {
+        EditText keyText = (EditText) findViewById(R.id.idText);
+        channelKey = keyText.getText().toString();
+        joinChannel();
     }
 
     // 注销方法
