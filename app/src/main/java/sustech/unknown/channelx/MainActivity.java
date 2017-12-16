@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -15,23 +16,25 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.List;
 
 import sustech.unknown.channelx.model.Channel;
+import sustech.unknown.channelx.model.CurrentUser;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CHANNEL_KEY_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL_KEY";
     public static final String CHANNEL_NAME_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL_NAME";
 
     private static final int RC_SIGN_IN = 123;
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
 
-    private DatabaseReference mDatabase, mChannelReference;
+    private DatabaseReference mChannelReference;
     private String channelKey;
 
     @Override
@@ -43,23 +46,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        // 检验当前是否登陆
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-        Log.d("onStart", "onStart is activated.");
-
-        if (mUser == null) {
-            Log.d("onStart", "user is null.");
-            login();
-        }
-        else {
-            Log.d("onStart", mUser.getEmail());
-        }
-
+        checkLogin();
     }
 
-    public void joinChannel() {
+    private void checkLogin() {
+        // 检验当前是否登陆
+        FirebaseUser user = CurrentUser.getUser();
+
+        Log.d("onStart", "onStart is activated.");
+        if (user == null) {
+            Log.d("onStart", "user is null.");
+            startLogin();
+        }
+        else {
+            Log.d("onStart", user.getEmail());
+        }
+    }
+
+    private void joinChannel() {
         Intent intent = new Intent(this, ChatActivity.class);
         EditText editText = (EditText) findViewById(R.id.nameText);
         String message = editText.getText().toString();
@@ -70,15 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void OnCreateChannel(View view) {
         // 初始化数据库
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mChannelReference = mDatabase.child("channel");
+        mChannelReference = FirebaseDatabase.getInstance().getReference().child("channel");
 
         EditText nameText = (EditText) findViewById(R.id.nameText);
 
         DatabaseReference channelChild = mChannelReference.push();
         Channel channel = new Channel();
         channel.setName(nameText.getText().toString());
-        channel.setCreatorId(mUser.getUid());
+        channel.setCreatorId(CurrentUser.getUser().getUid());
         channel.setStartTime(System.currentTimeMillis());
         channelKey = channelChild.getKey();
         channelChild.setValue(channel).addOnSuccessListener(
@@ -92,14 +95,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnJoinChannel(View view) {
+
+        mChannelReference = FirebaseDatabase.getInstance().getReference().child("channel");
+
         EditText keyText = (EditText) findViewById(R.id.idText);
         channelKey = keyText.getText().toString();
-        joinChannel();
+
+        mChannelReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(channelKey)){
+                    joinChannel();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Cannot find that Channel!",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+
     }
 
     // 注销方法
-    public void signout(View view) {
-        mAuth.signOut();
+    private void signout(View view) {
+        FirebaseAuth.getInstance().signOut();
         AuthUI authUI = AuthUI.getInstance();
         authUI.delete(this).addOnCompleteListener(
                 new OnCompleteListener<Void>() {
@@ -109,10 +131,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-        login();
+        startLogin();
     }
 
-    public void login() {
+    private void startLogin() {
         // 选择登陆验证方式
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
@@ -135,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
             }
