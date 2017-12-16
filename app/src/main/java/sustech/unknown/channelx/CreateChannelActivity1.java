@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class CreateChannelActivity1 extends AppCompatActivity {
@@ -14,6 +16,29 @@ public class CreateChannelActivity1 extends AppCompatActivity {
         setContentView(R.layout.activity_create_channel1);
 
         initializeToolbar();
+
+        ImageView anonymousImageView = (ImageView) findViewById(R.id.anonymousImageView);
+        ImageView onymousImageView = (ImageView) findViewById(R.id.onymousImageView);
+
+        anonymousImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreateChannelActivity2(true);
+            }
+        });
+
+        onymousImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreateChannelActivity2(false);
+            }
+        });
+    }
+
+    private void startCreateChannelActivity2(boolean anonymous){
+        Intent intent = new Intent(this, CreateChannelActivity2.class);
+        intent.putExtra("anonymous", anonymous);
+        startActivity(intent);
     }
 
     private void initializeToolbar() {

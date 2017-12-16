@@ -9,4 +9,10 @@
     <string name="create_channel_title">Create Channel</string>
     <string name="onymous">Onymous</string>
     <string name="anonymous">Anonymous</string>
+    <string name="upload_channel_image">Upload an image</string>
+    <string name="channel_name">Channel Name</string>
+    <string name="channel_name_hint">Business Meeting</string>
+    <string name="expired_date">Expired Date</string>
+    <string name="expired_date_hint">2018-1-1</string>
+    <string name="create_channel_button">Create</string>
 </resources>
