@@ -74,23 +74,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void OnCreateChannel(View view) {
         // 初始化数据库
-        mChannelReference = FirebaseDatabase.getInstance().getReference().child("channel");
+//        mChannelReference = FirebaseDatabase.getInstance().getReference().child("channel");
+//
+//        EditText nameText = (EditText) findViewById(R.id.nameText);
+//
+//        DatabaseReference channelChild = mChannelReference.push();
+//        Channel channel = new Channel();
+//        channel.setName(nameText.getText().toString());
+//        channel.setCreatorId(CurrentUser.getUser().getUid());
+//        channel.setStartTime(System.currentTimeMillis());
+//        channelKey = channelChild.getKey();
+//        channelChild.setValue(channel).addOnSuccessListener(
+//                new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                joinChannel();
+//            }
+//        });
 
-        EditText nameText = (EditText) findViewById(R.id.nameText);
-
-        DatabaseReference channelChild = mChannelReference.push();
-        Channel channel = new Channel();
-        channel.setName(nameText.getText().toString());
-        channel.setCreatorId(CurrentUser.getUser().getUid());
-        channel.setStartTime(System.currentTimeMillis());
-        channelKey = channelChild.getKey();
-        channelChild.setValue(channel).addOnSuccessListener(
-                new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                joinChannel();
-            }
-        });
+        Intent intent = new Intent(this, CreateChannelActivity1.class);
+        startActivity(intent);
 
     }
 

@@ -6,4 +6,7 @@
     <string name="create_channe_hint">Enter a name</string>
     <string name="join_channel">Join Channel</string>
     <string name="join_channel_hint">Enter an ID</string>
+    <string name="create_channel_title">Create Channel</string>
+    <string name="onymous">Onymous</string>
+    <string name="anonymous">Anonymous</string>
 </resources>
