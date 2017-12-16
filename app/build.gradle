@@ -32,6 +32,8 @@ dependencies {
 
 //    compile 'com.google.firebase:firebase-core:11.6.2'
 
+    compile 'com.google.android.gms:play-services-auth:11.4.2'
+
     // Firebase UI 登陆验证
     compile 'com.firebaseui:firebase-ui-auth:3.1.0'
 
