@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".ChannelsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,23 +18,29 @@
         </activity>
         <activity
             android:name=".ChatActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ChannelsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ChannelsActivity" />
         </activity>
         <activity
             android:name=".CreateChannelActivity1"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ChannelsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ChannelsActivity" />
         </activity>
         <activity android:name=".CreateChannelActivity2"
             android:parentActivityName=".CreateChannelActivity1">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CreateChannelActivity1" />
+        </activity>
+        <activity android:name=".ProfileActivity"
+            android:parentActivityName=".ChannelsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChannelsActivity" />
         </activity>
     </application>
 

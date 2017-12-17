@@ -49,13 +49,13 @@ public class ChatActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(intent.getStringExtra(MainActivity.CHANNEL_NAME_MESSAGE));
+       toolbarTitle.setText(intent.getStringExtra(ChannelsActivity.CHANNEL_NAME_MESSAGE));
+
     }
 
     private String getChannelKey(Intent intent) {
-        return intent.getStringExtra(MainActivity.CHANNEL_KEY_MESSAGE);
+        return intent.getStringExtra(ChannelsActivity.CHANNEL_KEY_MESSAGE);
     }
 
     private DatabaseReference getMessagesReference(Intent intent) {
