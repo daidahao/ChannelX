@@ -15,4 +15,6 @@
     <string name="expired_date">Expired Date</string>
     <string name="expired_date_hint">2018-1-1</string>
     <string name="create_channel_button">Create</string>
+    <string name="create_channel_group">Group</string>
+    <string name="create_channel_one2one">One To One</string>
 </resources>

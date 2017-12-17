@@ -37,7 +37,7 @@ public class CreateChannelActivity1 extends AppCompatActivity {
 
     private void startCreateChannelActivity2(boolean anonymous){
         Intent intent = new Intent(this, CreateChannelActivity2.class);
-        intent.putExtra("anonymous", anonymous);
+        intent.putExtra(CreateChannelActivity2.anonymousString, anonymous);
         startActivity(intent);
     }
 
