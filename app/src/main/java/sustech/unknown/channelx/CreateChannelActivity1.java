@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class CreateChannelActivity1 extends AppCompatActivity {
 
@@ -37,7 +36,7 @@ public class CreateChannelActivity1 extends AppCompatActivity {
 
     private void startCreateChannelActivity2(boolean anonymous){
         Intent intent = new Intent(this, CreateChannelActivity2.class);
-        intent.putExtra(CreateChannelActivity2.anonymousString, anonymous);
+        intent.putExtra(CreateChannelActivity2.ANONYMOUS_EXTRA, anonymous);
         startActivity(intent);
     }
 

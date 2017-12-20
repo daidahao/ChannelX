@@ -5,9 +5,13 @@ package sustech.unknown.channelx.model;
  */
 
 public class Channel {
-    private String name, creatorId;
-    private long startTime;
-    private  int imageId;
+    private String name;
+    private String creatorId;
+    private String theme;
+    private long startTime, expiredTime;
+    private int imageId;
+    private boolean anonymous, group;
+
     public Channel(){}
     public Channel (String name, int imageId,long time){
         this.name=name;
@@ -44,4 +48,35 @@ public class Channel {
        return this.imageId=imageId;
     }
 
+    public boolean isAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
+    }
+
+    public long getExpiredTime() {
+        return expiredTime;
+    }
+
+    public void setExpiredTime(long expiredTime) {
+        this.expiredTime = expiredTime;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public boolean isGroup() {
+        return group;
+    }
+
+    public void setGroup(boolean group) {
+        this.group = group;
+    }
 }

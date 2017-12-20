@@ -24,12 +24,16 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
-//        int year = 2018;
-//        int month = 0;
-//        int day = 1;
+
+        Bundle bundle = getArguments();
+        year = bundle.getInt("YEAR");
+        month = bundle.getInt("MONTH");
+        day = bundle.getInt("DAY");
+
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), this, year, month, day);
     }
@@ -43,6 +47,10 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
             dateText.setText(DateFormater.calendarToString());
         } else {
             dateText.setText(DateFormater.dateToString(year, month, dayOfMonth));
+            // Calendar c = Calendar.getInstance();
+            // c.set(year, month, dayOfMonth, 0, 0, 0);
+            ((CreateChannelActivity2)getActivity())
+                    .setDate(year, month, dayOfMonth);
         }
     }
 }

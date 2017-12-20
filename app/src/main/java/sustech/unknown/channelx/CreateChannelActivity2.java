@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -15,19 +16,27 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
+import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.listener.ThemeReferenceListener;
+import sustech.unknown.channelx.model.Channel;
+import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
+import sustech.unknown.channelx.util.DateFormater;
 
 public class CreateChannelActivity2 extends AppCompatActivity {
 
     private Switch groupSwitch;
     private TextView groupTextView, one2oneTextView;
-    private EditText dateText;
+    private EditText dateText, nameText;
     private Boolean anonymous;
+    private Spinner spinner;
+    private Calendar calendar;
 
-    public static String anonymousString =
-            "sustech.unknown.channelx.CreateChannelActivity2.anonymousString";
+    public static String ANONYMOUS_EXTRA =
+            "sustech.unknown.channelx.CreateChannelActivity2.ANONYMOUS_EXTRA";
 
 
     @Override
@@ -39,30 +48,46 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         initializeToolbar();
         initializeGroupSwitch();
         initializeDateText();
+        initializeNameText();
 
     }
 
+    private void initializeNameText() {
+        nameText = findViewById(R.id.nameText);
+    }
+
     private void initializeDateText() {
-        dateText = (EditText) findViewById(R.id.dateText);
+        calendar = Calendar.getInstance();
+
+        dateText = findViewById(R.id.dateText);
+        dateText.setHint(DateFormater.calendarToString());
         dateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
+                bundle.putInt("YEAR" , calendar.get(calendar.YEAR));
+                bundle.putInt("MONTH", calendar.get(calendar.MONTH));
+                bundle.putInt("DAY", calendar.get(calendar.DAY_OF_MONTH));
                 DialogFragment dialogFragment = new DatePickerFragment();
+                dialogFragment.setArguments(bundle);
                 dialogFragment.show(getFragmentManager(), "datePicker");
             }
         });
     }
 
+    public void setDate(int year, int month, int day){
+        calendar.set(year, month, day, 0, 0);
+    }
+
     private void checkAnonymous() {
         Intent intent = getIntent();
-        anonymous = intent.getBooleanExtra(anonymousString, false);
+        anonymous = intent.getBooleanExtra(ANONYMOUS_EXTRA, false);
+        spinner = findViewById(R.id.spinner);
         if (anonymous) {
             initializeSpinner();
         } else{
             TextView themeTextView = findViewById(R.id.themeTextView);
             themeTextView.setVisibility(View.INVISIBLE);
-            Spinner spinner  = (Spinner) findViewById(R.id.spinner);
             spinner.setVisibility(View.INVISIBLE);
         }
     }
@@ -78,12 +103,28 @@ public class CreateChannelActivity2 extends AppCompatActivity {
 
 
     private void initializeSpinner() {
-        Spinner spinner  = (Spinner) findViewById(R.id.spinner);
         ArrayList<String> themesList = new ArrayList<String>();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 R.layout.support_simple_spinner_dropdown_item, themesList);
         loadThemesList(themesList, adapter);
         spinner.setAdapter(adapter);
+    }
+
+    public void OnCreateButton(View view) {
+        Channel channel = new Channel();
+        channel.setAnonymous(anonymous);
+        channel.setCreatorId(CurrentUser.getUser().getUid());
+        channel.setStartTime(System.currentTimeMillis());
+        channel.setName(nameText.getText().toString());
+        channel.setExpiredTime(calendar.getTimeInMillis());
+        channel.setGroup(!groupSwitch.isChecked());
+        if (anonymous) {
+            channel.setTheme(spinner.getSelectedItem().toString());
+            Log.d("OnCreateButton", spinner.getSelectedItem().toString());
+        }
+        ChannelDao channelDao = new ChannelDao();
+        channelDao.createChannel(channel);
+        //
     }
 
     private void initializeGroupSwitch() {
@@ -120,7 +161,5 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public void OnCreateButton(View view) {
 
-    }
 }
