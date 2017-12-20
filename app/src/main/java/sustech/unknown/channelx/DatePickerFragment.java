@@ -10,13 +10,14 @@ import android.widget.EditText;
 
 import java.util.Calendar;
 
+import sustech.unknown.channelx.util.DateFormater;
+
 /**
  * Created by dahao on 2017/12/17.
  */
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
 
-    public static String dateTextKey = "dateTextKey";
     private int year, month, day;
 
     @Override
@@ -39,9 +40,9 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
         if ((year < this.year) || (year == this.year && month < this.month) ||
                 (year == this.year && month == this.month && dayOfMonth < this.day)) {
-            dateText.setText(this.year + "-" + (this.month + 1) + "-" + this.day);
+            dateText.setText(DateFormater.calendarToString());
         } else {
-            dateText.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
+            dateText.setText(DateFormater.dateToString(year, month, dayOfMonth));
         }
     }
 }
