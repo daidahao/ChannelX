@@ -101,8 +101,7 @@ public class ChannelsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              //  Intent intent =new Intent(ChannelsActivity.this,MainActivity.class);
-              //  startActivity(intent);
+                OnCreateChannel(view);
             }
         });
 
@@ -196,38 +195,48 @@ public class ChannelsActivity extends AppCompatActivity {
         }
 
     }
-/***
-    public void joinChannel() {
-        ntent intent = new Intent(this, ChatActivity.class);
-       EditText editText = (EditText) findViewById(R.id.nameText);
-        String message = editText.getText().toString();
-        intent.putExtra(CHANNEL_NAME_MESSAGE, "CHANNEL " + message);
-       intent.putExtra(CHANNEL_KEY_MESSAGE, channelKey);
+
+    public void OnCreateChannel(View view) {
+        Intent intent = new Intent(this, CreateChannelActivity1.class);
         startActivity(intent);
     }
 
-    public void OnCreateChannel(View view) {
-        // 初始化数据库
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mChannelReference = mDatabase.child("channel");
+//    public void OnCreateChannel(View view) {
+//        // 初始化数据库
+//        mDatabase = FirebaseDatabase.getInstance().getReference();
+//        mChannelReference = mDatabase.child("channel");
+//
+//        EditText nameText = (EditText) findViewById(R.id.nameText);
+//
+//        DatabaseReference channelChild = mChannelReference.push();
+//        Channel channel = new Channel();
+//        channel.setName(nameText.getText().toString());
+//        channel.setCreatorId(mUser.getUid());
+//        channel.setStartTime(System.currentTimeMillis());
+//        channelKey = channelChild.getKey();
+//        channelChild.setValue(channel).addOnSuccessListener(
+//                new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        joinChannel();
+//                    }
+//                });
+//
+//    }
+//
+//    public void joinChannel() {
+//        Intent intent = new Intent(this, ChatActivity.class);
+//        EditText editText = (EditText) findViewById(R.id.nameText);
+//        String message = editText.getText().toString();
+//        intent.putExtra(CHANNEL_NAME_MESSAGE, "CHANNEL " + message);
+//        intent.putExtra(CHANNEL_KEY_MESSAGE, channelKey);
+//        startActivity(intent);
+//    }
 
-        EditText nameText = (EditText) findViewById(R.id.nameText);
+/***
 
-        DatabaseReference channelChild = mChannelReference.push();
-        Channel channel = new Channel();
-        channel.setName(nameText.getText().toString());
-        channel.setCreatorId(mUser.getUid());
-        channel.setStartTime(System.currentTimeMillis());
-        channelKey = channelChild.getKey();
-        channelChild.setValue(channel).addOnSuccessListener(
-                new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        joinChannel();
-                    }
-                });
 
-    }
+
 
     public void OnJoinChannel(View view) {
         EditText keyText = (EditText) findViewById(R.id.idText);

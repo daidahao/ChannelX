@@ -1,21 +1,23 @@
 package sustech.unknown.channelx;
 
-import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import sustech.unknown.channelx.listener.ThemeReferenceListener;
+import sustech.unknown.channelx.model.DatabaseRoot;
 
 public class CreateChannelActivity2 extends AppCompatActivity {
 
@@ -65,14 +67,23 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         }
     }
 
+    private void loadThemesList(
+            ArrayList<String> themesList,
+            ArrayAdapter adapter) {
+        DatabaseRoot.getRoot()
+                .child("theme").
+                addChildEventListener(
+                        new ThemeReferenceListener(themesList, adapter));
+    }
+
 
     private void initializeSpinner() {
         Spinner spinner  = (Spinner) findViewById(R.id.spinner);
-        String themes[] = {"Animals", "Insects", "Fruits"};
+        ArrayList<String> themesList = new ArrayList<String>();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.support_simple_spinner_dropdown_item, themes);
+                R.layout.support_simple_spinner_dropdown_item, themesList);
+        loadThemesList(themesList, adapter);
         spinner.setAdapter(adapter);
-        // spinner.setVisibility(View.INVISIBLE);
     }
 
     private void initializeGroupSwitch() {
@@ -110,7 +121,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     }
 
     public void OnCreateButton(View view) {
-//        Intent intent = new Intent(this, CreateChannelActivity3.class);
-//        startActivity(intent);
+
     }
 }
