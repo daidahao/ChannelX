@@ -15,6 +15,7 @@ import co.intentservice.chatui.ChatView;
 import sustech.unknown.channelx.listener.MessagesReferenceListener;
 import sustech.unknown.channelx.listener.OnSentMessageListenerImpl;
 import sustech.unknown.channelx.listener.TypingListenerImpl;
+import sustech.unknown.channelx.model.DatabaseRoot;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -59,8 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private DatabaseReference getMessagesReference(Intent intent) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        return database.getReference()
+        return DatabaseRoot.getRoot()
                 .child("channel")
                 .child(getChannelKey(intent))
                 .child("messages");
