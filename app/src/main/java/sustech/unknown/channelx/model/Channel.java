@@ -12,8 +12,11 @@ public class Channel {
     private int imageId;
     private boolean anonymous, group;
     private String key;
+    private boolean isDestroyed;
 
-    public Channel(){}
+    public Channel(){
+        this.isDestroyed = false;
+    }
     public Channel (String name, int imageId,long time){
         this.name=name;
         this.imageId=imageId;
@@ -87,5 +90,13 @@ public class Channel {
 
     public void writeKey(String key) {
         this.key = key;
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
     }
 }

@@ -145,6 +145,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         channel.setName(nameText.getText().toString());
         channel.setExpiredTime(calendar.getTimeInMillis());
         channel.setGroup(!groupSwitch.isChecked());
+        channel.setDestroyed(false);
         if (anonymous) {
             channel.setTheme(spinner.getSelectedItem().toString());
             Log.d("OnCreateButton", spinner.getSelectedItem().toString());
