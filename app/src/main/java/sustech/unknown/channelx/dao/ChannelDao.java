@@ -1,14 +1,15 @@
 package sustech.unknown.channelx.dao;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 
 import sustech.unknown.channelx.CreateChannelActivity2;
+import sustech.unknown.channelx.command.Command;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
@@ -21,13 +22,16 @@ public class ChannelDao {
 
     private final String channelKey = "channel";
     private CreateChannelActivity2 activity2;
+    private Command onSuccessCommand;
+    private Command onFailureCommand;
 
     public ChannelDao() {
 
     }
 
-    public  ChannelDao(CreateChannelActivity2 activity2) {
-        this.activity2 = activity2;
+    public ChannelDao(Command onSuccessCommand, Command onFailureCommand) {
+        this.onSuccessCommand = onSuccessCommand;
+        this.onFailureCommand = onFailureCommand;
     }
 
 
@@ -42,19 +46,23 @@ public class ChannelDao {
     public void createChannel(final Channel channel) {
         DatabaseReference channelChild = getChannelRoot().push();
         channel.writeKey(channelChild.getKey());
-        channelChild.setValue(channel).addOnSuccessListener(
-                new OnSuccessListener<Void>() {
+        addListenersForTask(channelChild.setValue(channel));
+    }
+
+    private void addListenersForTask(Task<Void> task) {
+        task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                joinChannel(channel);
-                if (activity2 != null) {
-                    activity2.joinChannel(channel);
+                if (onSuccessCommand != null) {
+                    onSuccessCommand.execute();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                if (onFailureCommand != null) {
+                    onFailureCommand.execute();
+                }
             }
         });
     }
