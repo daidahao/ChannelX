@@ -30,13 +30,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ChannelsActivity" />
         </activity>
-        <activity android:name=".CreateChannelActivity2"
+        <activity
+            android:name=".CreateChannelActivity2"
             android:parentActivityName=".CreateChannelActivity1">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CreateChannelActivity1" />
         </activity>
-        <activity android:name=".ProfileActivity"
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".ChannelsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChannelsActivity" />
+        </activity>
+        <activity android:name=".JoinChannelActivity"
             android:parentActivityName=".ChannelsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

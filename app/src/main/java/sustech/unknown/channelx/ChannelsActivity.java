@@ -64,6 +64,7 @@ public class ChannelsActivity extends AppCompatActivity {
     public static final String CHANNEL_NAME_MESSAGE =
             "sustech.unknown.channelx.ChannelsActivity.CHANNEL_NAME";
     public static final int CREATE_CHANNEL_1_REQUEST = 666;
+    public static final int JOIN_CHANNEL_REQUEST = 999;
 
 
     @Override
@@ -167,7 +168,8 @@ public class ChannelsActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.findc:
-                Toast.makeText(this, "You clicked findc", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "You clicked findc", Toast.LENGTH_SHORT).show();
+                onJoinChannel();
                 break;
             case R.id.timeout:
                 Toast.makeText(this, "You clicked timeout", Toast.LENGTH_SHORT).show();
@@ -178,6 +180,11 @@ public class ChannelsActivity extends AppCompatActivity {
             default:
         }
         return true;
+    }
+
+    private void onJoinChannel() {
+        Intent intent = new Intent(this, JoinChannelActivity.class);
+        startActivityForResult(intent, JOIN_CHANNEL_REQUEST);
     }
 
 
@@ -205,50 +212,6 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, CREATE_CHANNEL_1_REQUEST);
     }
 
-
-//    public void OnCreateChannel(View view) {
-//        // 初始化数据库
-//        mDatabase = FirebaseDatabase.getInstance().getReference();
-//        mChannelReference = mDatabase.child("channel");
-//
-//        EditText nameText = (EditText) findViewById(R.id.nameText);
-//
-//        DatabaseReference channelChild = mChannelReference.push();
-//        Channel channel = new Channel();
-//        channel.setName(nameText.getText().toString());
-//        channel.setCreatorId(mUser.getUid());
-//        channel.setStartTime(System.currentTimeMillis());
-//        channelKey = channelChild.getKey();
-//        channelChild.setValue(channel).addOnSuccessListener(
-//                new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        joinChannel();
-//                    }
-//                });
-//
-//    }
-//
-//    public void joinChannel() {
-//        Intent intent = new Intent(this, ChatActivity.class);
-//        EditText editText = (EditText) findViewById(R.id.nameText);
-//        String message = editText.getText().toString();
-//        intent.putExtra(CHANNEL_NAME_MESSAGE, "CHANNEL " + message);
-//        intent.putExtra(CHANNEL_KEY_MESSAGE, channelKey);
-//        startActivity(intent);
-//    }
-
-/***
-
-
-
-
-    public void OnJoinChannel(View view) {
-        EditText keyText = (EditText) findViewById(R.id.idText);
-       channelKey = keyText.getText().toString();
-        joinChannel();
-    }
- ***/
     // 注销方法
     public void signout(View view) {
         mAuth.signOut();
