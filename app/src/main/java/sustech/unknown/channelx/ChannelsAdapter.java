@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import sustech.unknown.channelx.model.*;
+import sustech.unknown.channelx.util.DateFormater;
+
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -67,6 +69,7 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Channel channel = mChannelList.get(position);
         holder.channelName.setText(channel.getName());
+        holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
         Glide.with(mContext).load(channel.getImageId()).into(holder.channelImage);
     }
 

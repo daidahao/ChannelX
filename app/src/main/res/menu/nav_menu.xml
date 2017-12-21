@@ -7,9 +7,9 @@
             android:title="Channels"
             />
         <item
-            android:id="@+id/profile"
-            android:icon="@drawable/profile"
-            android:title="Profile" />
+            android:id="@+id/signout"
+            android:icon="@drawable/signout"
+            android:title="Signout" />
     </group>
 
 </menu>

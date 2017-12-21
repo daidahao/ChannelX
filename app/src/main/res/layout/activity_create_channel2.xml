@@ -67,8 +67,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/channelImageView"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintHorizontal_bias="0.502" />
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -200,15 +199,6 @@
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/themeTextView"
         android:layout_marginBottom="0dp" />
-
-    <Switch
-        android:id="@+id/expiredSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:checked="true"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView3"
-        app:layout_constraintLeft_toRightOf="@+id/textView3" />
 
 
 </android.support.constraint.ConstraintLayout>

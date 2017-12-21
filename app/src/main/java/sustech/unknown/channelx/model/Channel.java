@@ -11,13 +11,12 @@ public class Channel {
     private long startTime, expiredTime;
     private int imageId;
     private boolean anonymous, group;
-    private String key;
 
     public Channel(){}
     public Channel (String name, int imageId,long time){
         this.name=name;
         this.imageId=imageId;
-        this.startTime=time;
+        this.expiredTime=time;
     }
     public String getName() {
         return name;
@@ -79,13 +78,5 @@ public class Channel {
 
     public void setGroup(boolean group) {
         this.group = group;
-    }
-
-    public String readKey() {
-        return key;
-    }
-
-    public void writeKey(String key) {
-        this.key = key;
     }
 }
