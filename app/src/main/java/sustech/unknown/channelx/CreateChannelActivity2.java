@@ -18,6 +18,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import sustech.unknown.channelx.command.CreateChannelOnFailureCommand;
+import sustech.unknown.channelx.command.CreateChannelOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.fragment.DatePickerFragment;
 import sustech.unknown.channelx.listener.ThemeReferenceListener;
@@ -151,7 +153,12 @@ public class CreateChannelActivity2 extends AppCompatActivity {
             channel.setExpiredTime(Long.MAX_VALUE);
         }
         view.setClickable(false);
-        ChannelDao channelDao = new ChannelDao();
+        CreateChannelOnSuccessCommand onSuccessCommand =
+                new CreateChannelOnSuccessCommand(this);
+        CreateChannelOnFailureCommand onFailureCommand =
+                new CreateChannelOnFailureCommand(this);
+        ChannelDao channelDao =
+                new ChannelDao(onSuccessCommand, onFailureCommand);
         channelDao.createChannel(channel);
     }
 
@@ -204,5 +211,19 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra(ChatActivity.CHANNEL_KEY_MESSAGE, channel.readKey());
         startActivity(intent);
+    }
+
+    public void onSuccess() {
+        ToastUtil.makeToast(this,
+                "Channel was created successfully!");
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    public void onFailure() {
+        ToastUtil.makeToast(this,
+                "Channel cannot be created! Please check your connection!");
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

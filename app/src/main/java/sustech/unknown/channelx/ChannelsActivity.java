@@ -59,8 +59,12 @@ public class ChannelsActivity extends AppCompatActivity {
     private DatabaseReference mDatabase, mChannelReference;
     private String channelKey;
 
-    public static final String CHANNEL_KEY_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL_KEY";
-   public static final String CHANNEL_NAME_MESSAGE = "sustech.unknown.channelx.chat.CHANNEL_NAME";
+    public static final String CHANNEL_KEY_MESSAGE =
+            "sustech.unknown.channelx.ChannelsActivity.CHANNEL_KEY";
+    public static final String CHANNEL_NAME_MESSAGE =
+            "sustech.unknown.channelx.ChannelsActivity.CHANNEL_NAME";
+    public static final int CREATE_CHANNEL_1_REQUEST = 666;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,8 +202,9 @@ public class ChannelsActivity extends AppCompatActivity {
 
     public void OnCreateChannel(View view) {
         Intent intent = new Intent(this, CreateChannelActivity1.class);
-        startActivity(intent);
+        startActivityForResult(intent, CREATE_CHANNEL_1_REQUEST);
     }
+
 
 //    public void OnCreateChannel(View view) {
 //        // 初始化数据库
@@ -280,11 +285,17 @@ public class ChannelsActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
+            }
+            return;
+        }
+
+        if (requestCode == CREATE_CHANNEL_1_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                // DO SOMETHING
             }
         }
     }
