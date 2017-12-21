@@ -6,9 +6,11 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
-import sustech.unknown.channelx.CreateChannelActivity2;
 import sustech.unknown.channelx.command.Command;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
@@ -21,7 +23,6 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 public class ChannelDao {
 
     private final String channelKey = "channel";
-    private CreateChannelActivity2 activity2;
     private Command onSuccessCommand;
     private Command onFailureCommand;
 
@@ -70,8 +71,30 @@ public class ChannelDao {
     public void joinChannel(Channel channel) {
         if (channel.getCreatorId().equals(
                 CurrentUser.getUser().getUid())){
-
         }
+    }
+
+    public void joinChannel(final String channelId) {
+        getChannelRoot().addListenerForSingleValueEvent(
+                new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(channelId)) {
+                    if (onSuccessCommand != null) {
+                        onSuccessCommand.execute();
+                    }
+                } else {
+                    if (onFailureCommand != null) {
+                        onFailureCommand.execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
