@@ -14,13 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.fragment.DatePickerFragment;
 import sustech.unknown.channelx.listener.ThemeReferenceListener;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
@@ -151,6 +150,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         if (!expriedSwitch.isChecked()) {
             channel.setExpiredTime(Long.MAX_VALUE);
         }
+        view.setClickable(false);
         ChannelDao channelDao = new ChannelDao();
         channelDao.createChannel(channel);
     }
