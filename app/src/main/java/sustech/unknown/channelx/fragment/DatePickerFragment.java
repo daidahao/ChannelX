@@ -1,4 +1,4 @@
-package sustech.unknown.channelx;
+package sustech.unknown.channelx.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 import java.util.Calendar;
 
+import sustech.unknown.channelx.CreateChannelActivity2;
+import sustech.unknown.channelx.R;
 import sustech.unknown.channelx.util.DateFormater;
 
 /**
