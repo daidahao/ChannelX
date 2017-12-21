@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import sustech.unknown.channelx.model.*;
+import sustech.unknown.channelx.model.Channel;
 /**
  * Created by Administrator on 2017/12/16.
  */

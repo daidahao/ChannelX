@@ -13,4 +13,7 @@ public class CurrentUser {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    public static void getAnything(){
+        FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
+    }
 }

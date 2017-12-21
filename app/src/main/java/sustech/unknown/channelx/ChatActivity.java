@@ -23,6 +23,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private ChatView chatView;
 
+    public static String CHANNEL_KEY_MESSAGE =
+            "sustech.unknown.channelx.ChatActivity.CHANNEL_KEY";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +54,12 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-       toolbarTitle.setText(intent.getStringExtra(ChannelsActivity.CHANNEL_NAME_MESSAGE));
+        toolbarTitle.setText(intent.getStringExtra(ChannelsActivity.CHANNEL_NAME_MESSAGE));
 
     }
 
     private String getChannelKey(Intent intent) {
-        return intent.getStringExtra(ChannelsActivity.CHANNEL_KEY_MESSAGE);
+        return intent.getStringExtra(CHANNEL_KEY_MESSAGE);
     }
 
     private DatabaseReference getMessagesReference(Intent intent) {

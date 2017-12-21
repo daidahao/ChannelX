@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,15 +26,18 @@ import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.util.DateFormater;
+import sustech.unknown.channelx.util.ToastUtil;
 
 public class CreateChannelActivity2 extends AppCompatActivity {
 
     private Switch groupSwitch;
+    private Switch expriedSwitch;
     private TextView groupTextView, one2oneTextView;
     private EditText dateText, nameText;
     private Boolean anonymous;
     private Spinner spinner;
     private Calendar calendar;
+    private TextView themeTextView;
 
     public static String ANONYMOUS_EXTRA =
             "sustech.unknown.channelx.CreateChannelActivity2.ANONYMOUS_EXTRA";
@@ -49,7 +53,27 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         initializeGroupSwitch();
         initializeDateText();
         initializeNameText();
+        initializeExpiredSwitch();
 
+    }
+
+    private void initializeExpiredSwitch() {
+        expriedSwitch = findViewById(R.id.expiredSwitch);
+        expriedSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setVisible(dateText, isChecked);
+            }
+        });
+    }
+
+    private void setVisible(View view, boolean visible) {
+        if (visible) {
+            view.setVisibility(View.VISIBLE);
+        } else{
+            view.setVisibility(View.GONE);
+        }
     }
 
     private void initializeNameText() {
@@ -83,12 +107,11 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         Intent intent = getIntent();
         anonymous = intent.getBooleanExtra(ANONYMOUS_EXTRA, false);
         spinner = findViewById(R.id.spinner);
+        themeTextView = findViewById(R.id.themeTextView);
+        setVisible(themeTextView, anonymous);
+        setVisible(spinner, anonymous);
         if (anonymous) {
             initializeSpinner();
-        } else{
-            TextView themeTextView = findViewById(R.id.themeTextView);
-            themeTextView.setVisibility(View.INVISIBLE);
-            spinner.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -111,6 +134,9 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     }
 
     public void OnCreateButton(View view) {
+        if (!checkAllFields()) {
+            return;
+        }
         Channel channel = new Channel();
         channel.setAnonymous(anonymous);
         channel.setCreatorId(CurrentUser.getUser().getUid());
@@ -122,9 +148,21 @@ public class CreateChannelActivity2 extends AppCompatActivity {
             channel.setTheme(spinner.getSelectedItem().toString());
             Log.d("OnCreateButton", spinner.getSelectedItem().toString());
         }
+        if (!expriedSwitch.isChecked()) {
+            channel.setExpiredTime(Long.MAX_VALUE);
+        }
         ChannelDao channelDao = new ChannelDao();
         channelDao.createChannel(channel);
-        //
+    }
+
+
+
+    private boolean checkAllFields() {
+        if (nameText.getText().toString().trim().isEmpty()){
+            ToastUtil.makeToast(this, "Channel's name shouldn't be empty!");
+            return  false;
+        }
+        return true;
     }
 
     private void initializeGroupSwitch() {
@@ -162,4 +200,9 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     }
 
 
+    public void joinChannel(Channel channel) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra(ChatActivity.CHANNEL_KEY_MESSAGE, channel.readKey());
+        startActivity(intent);
+    }
 }
