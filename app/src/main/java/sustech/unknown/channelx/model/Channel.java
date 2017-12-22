@@ -18,7 +18,7 @@ public class Channel {
     private boolean isDestroyed;
     private int memberCount;
     private Map<String, Member> members = new HashMap<>();
-    private Map<Integer, String> themeList = new HashMap<>();
+    private Map<String, String> themeList = new HashMap<>();
 
     public Channel(){
         this.isDestroyed = false;
@@ -123,11 +123,11 @@ public class Channel {
         this.members = members;
     }
 
-    public Map<Integer, String> getThemeList() {
+    public Map<String, String> getThemeList() {
         return themeList;
     }
 
-    public void setThemeList(Map<Integer, String> themeList) {
+    public void setThemeList(Map<String, String> themeList) {
         this.themeList = themeList;
     }
 }
