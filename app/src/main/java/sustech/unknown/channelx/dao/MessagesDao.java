@@ -81,40 +81,7 @@ public class MessagesDao {
     }
 
     public void addListenerForChatMessage() {
-        getMessagesNode().addChildEventListener(
-                new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                if (chatMessage == null) {
-                    return;
-                }
-                Log.d("chatMessage", chatMessage.getMessage());
-                chatMessage.setNickname(
-                        channel.getMembers().get(
-                                chatMessage.getUserid()
-                        ).getNickname()
-                );
-                if (chatMessage.getUserid().equals(userId)){
-                    chatMessage.setType(ChatMessage.Type.SENT);
-                }
-                else {
-                    chatMessage.setType(ChatMessage.Type.RECEIVED);
-                }
-                sendChatMessageObject(chatMessage);
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+        getMessagesNode().addChildEventListener(new MessagesChildEventListener());
     }
 
     public Command getOnSuccessCommand() {
@@ -132,4 +99,37 @@ public class MessagesDao {
     public void setOnFailureCommand(Command onFailureCommand) {
         this.onFailureCommand = onFailureCommand;
     }
+
+    class MessagesChildEventListener implements ChildEventListener {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+            if (chatMessage == null) {
+                return;
+            }
+            Log.d("chatMessage", chatMessage.getMessage());
+            chatMessage.setNickname(
+                    channel.getMembers().get(
+                            chatMessage.getUserid()
+                    ).getNickname()
+            );
+            if (chatMessage.getUserid().equals(userId)){
+                chatMessage.setType(ChatMessage.Type.SENT);
+            }
+            else {
+                chatMessage.setType(ChatMessage.Type.RECEIVED);
+            }
+            sendChatMessageObject(chatMessage);
+        }
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {}
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+        @Override
+        public void onCancelled(DatabaseError databaseError) {}
+    }
 }
+
+

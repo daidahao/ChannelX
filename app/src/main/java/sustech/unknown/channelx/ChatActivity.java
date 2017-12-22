@@ -11,13 +11,15 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 
 import co.intentservice.chatui.ChatView;
+import co.intentservice.chatui.models.ChatMessage;
 import sustech.unknown.channelx.command.ChatMessageObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
+import sustech.unknown.channelx.command.SendMessageOnFailureCommand;
+import sustech.unknown.channelx.command.SendMessageOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.dao.MessagesDao;
-import sustech.unknown.channelx.listener.OnSentMessageListenerImpl;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
@@ -35,21 +37,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         initializeChatView();
-
-//        initializeToolbar(intent);
-//
-//        messagesReference = getMessagesReference(intent);
-
-//
-//        // 增加message的监听器，可以在启动时加载ChatView，且在有新聊天消息时更新ChatView
-//        messagesReference.addChildEventListener(new MessagesReferenceListener(chatView));
-//        // 在发送消息时触发该监听器
-//        chatView.setOnSentMessageListener(
-//                new OnSentMessageListenerImpl(messagesReference, chatView));
-
         readChannelFromIntent(getIntent());
-
-
     }
 
     private void initializeChatView() {
@@ -104,7 +92,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void initializeOnSentMessageListener() {
         chatView.setOnSentMessageListener(
-                new OnSentMessageListenerImpl(messagesDao, chatView)
+                new OnSentMessageListenerImpl()
         );
     }
 
@@ -152,10 +140,23 @@ public class ChatActivity extends AppCompatActivity {
      * Created by dahao on 2017/12/16.
      */
 
-    static class TypingListenerImpl implements ChatView.TypingListener {
+    class TypingListenerImpl implements ChatView.TypingListener {
         @Override
         public void userStartedTyping() {}
         @Override
         public void userStoppedTyping() {}
+    }
+
+    class OnSentMessageListenerImpl implements ChatView.OnSentMessageListener {
+        @Override
+        public boolean sendMessage(ChatMessage chatMessage) {
+            // 暂时禁用输入框
+            chatView.disableInput();
+            // 在写入成功时触发监听器，清楚输入框的内容
+            messagesDao.setOnSuccessCommand(new SendMessageOnSuccessCommand(chatView));
+            messagesDao.setOnFailureCommand(new SendMessageOnFailureCommand(chatView));
+            messagesDao.addMessage(chatMessage);
+            return true;
+        }
     }
 }
