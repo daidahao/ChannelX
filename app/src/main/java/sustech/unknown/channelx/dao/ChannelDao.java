@@ -170,7 +170,7 @@ public class ChannelDao {
         if (objectCommand == null) {
             return;
         }
-        objectCommand.setChannel(channel);
+        objectCommand.setObject(channel);
         objectCommand.execute();
     }
 
