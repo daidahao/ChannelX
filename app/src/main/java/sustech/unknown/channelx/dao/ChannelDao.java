@@ -117,8 +117,10 @@ public class ChannelDao {
                         sendFailureMessage("The channel is already full!");
                         return Transaction.success(mutableData);
                     } else {
+                        Log.d("ChannelDao", channel.getThemeList().get("001"));
                         member = new Member(
-                                channel.getThemeList().get(channel.getMemberCount()));
+                                channel.getThemeList().get(
+                                        String.format("%03d", channel.getMemberCount() + 1)));
                     }
                 } else {
                     member = new Member(trueName);

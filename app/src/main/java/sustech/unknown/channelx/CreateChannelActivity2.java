@@ -25,7 +25,6 @@ import sustech.unknown.channelx.command.CreateChannelOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.dao.ThemeDao;
 import sustech.unknown.channelx.fragment.DatePickerFragment;
-import sustech.unknown.channelx.listener.ThemeReferenceListener;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
@@ -122,20 +121,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         }
     }
 
-    private void loadThemesList(
-            ArrayList<String> themesList,
-            ArrayAdapter adapter) {
-        DatabaseRoot.getRoot()
-                .child("theme").
-                addChildEventListener(
-                        new ThemeReferenceListener(themesList, adapter));
-    }
-
-//    private void loadAllThemesList(HashMap<String, HashMap> allThemesMap,
-//                                   HashMapAdapter adapter) {
-//        ThemeDao themeDao = new ThemeDao(allThemesMap, adapter);
-//        themeDao.readAllThemesList();
-//    }
 
     private void loadALlThemesList(ArrayList<String> allThemesList,
                                    HashMap<String, Map> allThemesMap,
@@ -152,10 +137,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
                 R.layout.support_simple_spinner_dropdown_item, allThemesList);
         loadALlThemesList(allThemesList, allThemesMap, adapter);
         spinner.setAdapter(adapter);
-//        HashMap<String, HashMap> allThemesList = new HashMap<>();
-//        HashMapAdapter hashMapAdapter = new HashMapAdapter(allThemesList);
-//        loadAllThemesList(allThemesList, hashMapAdapter);
-//        spinner.setAdapter(hashMapAdapter);
     }
 
     public void OnCreateButton(View view) {
