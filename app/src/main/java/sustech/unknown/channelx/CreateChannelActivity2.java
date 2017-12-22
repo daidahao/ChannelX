@@ -42,9 +42,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     private TextView themeTextView;
     private HashMap<String, Map> allThemesMap;
 
-    public static String ANONYMOUS_EXTRA =
-            "sustech.unknown.channelx.CreateChannelActivity2.ANONYMOUS_EXTRA";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +105,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
 
     private void checkAnonymous() {
         Intent intent = getIntent();
-        anonymous = intent.getBooleanExtra(ANONYMOUS_EXTRA, false);
+        anonymous = intent.getBooleanExtra(Configuration.ANONYMOUS_EXTRA, false);
         spinner = findViewById(R.id.spinner);
         themeTextView = findViewById(R.id.themeTextView);
         setVisible(themeTextView, anonymous);

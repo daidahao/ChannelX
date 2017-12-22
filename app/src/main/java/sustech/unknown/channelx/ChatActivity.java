@@ -4,20 +4,15 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.EditText;
 import android.widget.TextView;
 
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import co.intentservice.chatui.ChatView;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
-import sustech.unknown.channelx.listener.MessagesReferenceListener;
-import sustech.unknown.channelx.listener.OnSentMessageListenerImpl;
 import sustech.unknown.channelx.listener.TypingListenerImpl;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.DatabaseRoot;
@@ -30,11 +25,6 @@ public class ChatActivity extends AppCompatActivity {
     private ChatView chatView;
 
     private Channel channel;
-
-    public static final int ENTER_CHANNEL_REQUEST = 111;
-
-    public static final String CHANNEL_KEY_MESSAGE =
-            "sustech.unknown.channelx.ChatActivity.CHANNEL_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +62,11 @@ public class ChatActivity extends AppCompatActivity {
         ReadChannelOnFailureMessageCommand onFailureMessageCommand =
                 new ReadChannelOnFailureMessageCommand(this);
         ChannelDao channelDao = new ChannelDao(onSuccessMessageCommand, onFailureMessageCommand);
-        if (intent.getStringExtra(CHANNEL_KEY_MESSAGE) == null) {
+        if (intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE) == null) {
             onReadChannelFailure("CHANNEL ID cannot be empty");
             return;
         }
-        channelDao.readChannel(intent.getStringExtra(CHANNEL_KEY_MESSAGE), channel);
+        channelDao.readChannel(intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE), channel);
     }
 
     public void onReadChannelSuccess(String message) {
@@ -95,12 +85,12 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(intent.getStringExtra(ChannelsActivity.CHANNEL_NAME_MESSAGE));
+        // toolbarTitle.setText(intent.getStringExtra(Configuration.CHANNEL_NAME_MESSAGE));
 
     }
 
     private String getChannelKey(Intent intent) {
-        return intent.getStringExtra(CHANNEL_KEY_MESSAGE);
+        return intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE);
     }
 
     private DatabaseReference getMessagesReference(Intent intent) {

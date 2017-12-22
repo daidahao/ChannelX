@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import sustech.unknown.channelx.Configuration;
 import sustech.unknown.channelx.model.DatabaseRoot;
 
 /**
@@ -18,7 +19,6 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 
 public class ThemeDao {
 
-    private final String themeKey = "theme";
     private ArrayList<String> allThemesList;
     private ArrayAdapter adapter;
     private HashMap<String, Map> allThemesMap;
@@ -36,35 +36,43 @@ public class ThemeDao {
     }
 
     public void readAllThemesList() {
-        DatabaseRoot.getRoot().child(themeKey).addChildEventListener(
-                new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                allThemesList.add(dataSnapshot.getKey());
-                allThemesMap.put(dataSnapshot.getKey(), (HashMap<String, String>) dataSnapshot.getValue());
-                adapter.notifyDataSetChanged();
-            }
+        DatabaseRoot.getRoot()
+                .child(Configuration.themeKey)
+                .addChildEventListener(
+                new AllThemesChildEventListener(allThemesList, allThemesMap, adapter));
+    }
+}
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+class AllThemesChildEventListener implements ChildEventListener {
 
-            }
+    private ArrayList<String> allThemesList;
+    private HashMap<String, Map> allThemesMap;
+    private ArrayAdapter adapter;
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    AllThemesChildEventListener(ArrayList<String> allThemesList,
+                                       HashMap<String, Map> allThemesMap,
+                                       ArrayAdapter adapter) {
+        this.allThemesList = allThemesList;
+        this.allThemesMap = allThemesMap;
+        this.adapter = adapter;
     }
 
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        allThemesList.add(dataSnapshot.getKey());
+        allThemesMap.put(dataSnapshot.getKey(), (HashMap<String, String>) dataSnapshot.getValue());
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {}
 }

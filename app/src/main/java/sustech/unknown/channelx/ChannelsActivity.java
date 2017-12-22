@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,28 +17,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.util.ToastUtil;
-
-import static sustech.unknown.channelx.R.id.username;
 
 /**
  * Created by Administrator on 2017/12/16.
@@ -57,18 +48,8 @@ public class ChannelsActivity extends AppCompatActivity {
     private List<Channel> channelList = new ArrayList<>();
     private ChannelsAdapter adapter;
     private SwipeRefreshLayout swipeRefresh;
-    private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    private DatabaseReference mDatabase, mChannelReference;
-    private String channelKey;
-
-    public static final String CHANNEL_KEY_MESSAGE =
-            "sustech.unknown.channelx.ChannelsActivity.CHANNEL_KEY";
-    public static final String CHANNEL_NAME_MESSAGE =
-            "sustech.unknown.channelx.ChannelsActivity.CHANNEL_NAME";
-    public static final int CREATE_CHANNEL_1_REQUEST = 666;
-    public static final int JOIN_CHANNEL_REQUEST = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +165,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
     private void onJoinChannel() {
         Intent intent = new Intent(this, JoinChannelActivity.class);
-        startActivityForResult(intent, JOIN_CHANNEL_REQUEST);
+        startActivityForResult(intent, Configuration.JOIN_CHANNEL_REQUEST);
     }
 
 
@@ -220,52 +201,9 @@ public class ChannelsActivity extends AppCompatActivity {
 
     public void OnCreateChannel(View view) {
         Intent intent = new Intent(this, CreateChannelActivity1.class);
-        startActivityForResult(intent, CREATE_CHANNEL_1_REQUEST);
+        startActivityForResult(intent, Configuration.CREATE_CHANNEL_1_REQUEST);
     }
 
-//    public void OnCreateChannel(View view) {
-//        // 初始化数据库
-//        mDatabase = FirebaseDatabase.getInstance().getReference();
-//        mChannelReference = mDatabase.child("channel");
-//
-//        EditText nameText = (EditText) findViewById(R.id.nameText);
-//
-//        DatabaseReference channelChild = mChannelReference.push();
-//        Channel channel = new Channel();
-//        channel.setName(nameText.getText().toString());
-//        channel.setCreatorId(mUser.getUid());
-//        channel.setStartTime(System.currentTimeMillis());
-//        channelKey = channelChild.getKey();
-//        channelChild.setValue(channel).addOnSuccessListener(
-//                new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        joinChannel();
-//                    }
-//                });
-//
-//    }
-//
-//    public void joinChannel() {
-//        Intent intent = new Intent(this, ChatActivity.class);
-//        EditText editText = (EditText) findViewById(R.id.nameText);
-//        String message = editText.getText().toString();
-//        intent.putExtra(CHANNEL_NAME_MESSAGE, "CHANNEL " + message);
-//        intent.putExtra(CHANNEL_KEY_MESSAGE, channelKey);
-//        startActivity(intent);
-//    }
-
-/***
-
-
-
-
-    public void OnJoinChannel(View view) {
-        EditText keyText = (EditText) findViewById(R.id.idText);
-       channelKey = keyText.getText().toString();
-        joinChannel();
-    }
- ***/
     // 注销方法
     public void signout() {
         mAuth.signOut();
@@ -293,14 +231,14 @@ public class ChannelsActivity extends AppCompatActivity {
         signInIntentBuilder.setAvailableProviders(providers);
         signInIntentBuilder.setIsSmartLockEnabled(false);
         Intent intent = signInIntentBuilder.build();
-        startActivityForResult(intent, RC_SIGN_IN);
+        startActivityForResult(intent, Configuration.RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == Configuration.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
@@ -310,19 +248,20 @@ public class ChannelsActivity extends AppCompatActivity {
             }
             return;
         }
-        if (requestCode == CREATE_CHANNEL_1_REQUEST) {
+        if (requestCode == Configuration.CREATE_CHANNEL_1_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // DO SOMETHING
             }
         }
-        if (requestCode == JOIN_CHANNEL_REQUEST) {
+        if (requestCode == Configuration.JOIN_CHANNEL_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Intent intent = new Intent(this, ChatActivity.class);
-                intent.putExtra(ChatActivity.CHANNEL_KEY_MESSAGE, data.getStringExtra(CHANNEL_KEY_MESSAGE));
-                startActivityForResult(intent, ChatActivity.ENTER_CHANNEL_REQUEST);
+                intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE,
+                        data.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE));
+                startActivityForResult(intent, Configuration.ENTER_CHANNEL_REQUEST);
             }
         }
-        if (requestCode == ChatActivity.ENTER_CHANNEL_REQUEST) {
+        if (requestCode == Configuration.ENTER_CHANNEL_REQUEST) {
             if (resultCode == RESULT_CANCELED) {
                 ToastUtil.makeToast(this, "Cannot enter the channel!");
             }

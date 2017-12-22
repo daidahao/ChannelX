@@ -3,6 +3,7 @@ package sustech.unknown.channelx.dao;
 import com.google.firebase.database.DatabaseReference;
 
 import co.intentservice.chatui.models.ChatMessage;
+import sustech.unknown.channelx.Configuration;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.DatabaseRoot;
 
@@ -12,11 +13,11 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 
 public class MessagesDao {
 
-    public DatabaseReference getMessagesNode(Channel channel) {
+    DatabaseReference getMessagesNode(Channel channel) {
         return DatabaseRoot.getRoot()
-                .child(ChannelDao.channelKey)
+                .child(Configuration.channelKey)
                 .child(channel.readKey())
-                .child(ChannelDao.messagesKey);
+                .child(Configuration.messagesKey);
 
     }
 

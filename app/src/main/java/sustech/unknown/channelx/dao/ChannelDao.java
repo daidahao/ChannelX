@@ -1,7 +1,5 @@
 package sustech.unknown.channelx.dao;
 
-import android.provider.Settings;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,10 +13,10 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import sustech.unknown.channelx.Configuration;
 import sustech.unknown.channelx.command.Command;
 import sustech.unknown.channelx.command.MessageCommand;
 import sustech.unknown.channelx.model.Channel;
-import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.model.Member;
 
@@ -28,9 +26,6 @@ import sustech.unknown.channelx.model.Member;
 
 public class ChannelDao {
 
-    public static final String channelKey = "channel";
-    public static final String membersKey = "members";
-    public static final String messagesKey = "messages";
     private Command onSuccessCommand;
     private Command onFailureCommand;
 
@@ -49,7 +44,7 @@ public class ChannelDao {
     }
 
     private DatabaseReference getChannelRoot() {
-        return DatabaseRoot.getRoot().child(channelKey);
+        return DatabaseRoot.getRoot().child(Configuration.channelKey);
     }
 
     private DatabaseReference getChannelChild(String channelId) {
@@ -57,7 +52,7 @@ public class ChannelDao {
     }
 
     private DatabaseReference getChannelMembersChild(String channelId) {
-        return getChannelChild(channelId).child(membersKey);
+        return getChannelChild(channelId).child(Configuration.membersKey);
     }
 
 
