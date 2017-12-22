@@ -41,27 +41,6 @@ public class ThemeDao {
     }
 
     public void readAllThemesList() {
-//        DatabaseRoot.getRoot().child(themeKey).addValueEventListener(
-//                new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                allThemesList = dataSnapshot.getValue(AllThemesList.class);
-//                Log.d("readAllThemesList", allThemesList.size() + "");
-//                if (allThemesList.size() != 0) {
-//                    Log.d("readAllThemesList", allThemesList.containsKey("Harry Potter") + "");
-//                    Log.d("readAllThemesList", allThemesList.get("Harry Potter").get(0));
-//                }
-//
-//                adapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                if (databaseError != null) {
-//                    Log.d("readAllThemesList()", databaseError.getMessage());
-//                }
-//            }
-//        });
         DatabaseRoot.getRoot().child(themeKey).addChildEventListener(
                 new ChildEventListener() {
             @Override

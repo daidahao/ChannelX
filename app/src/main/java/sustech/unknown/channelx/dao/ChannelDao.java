@@ -104,12 +104,13 @@ public class ChannelDao {
                 Channel channel = mutableData.getValue(Channel.class);
                 Member member = null;
                 if (channel == null) {
-                    Log.d("joinChannel()", "The channel doesn't exist!");
+                    Log.d("joinChannel()", "(Possibly) The channel doesn't exist!");
+                    // sendFailureMessage("The channel doesn't exist!");
                     return Transaction.success(mutableData);
                 }
                 if (channel.getMembers().containsKey(userId)) {
                     Log.d("joinChannel()", "You are already in the channel!");
-                    sendFailureMessage("You are already in the channel!");
+                    sendSuccessMessage("You are already in the channel!");
                     return Transaction.success(mutableData);
                 } else if (channel.isAnonymous()) {
                     if (channel.getThemeList().size() <= channel.getMemberCount()) {
@@ -117,7 +118,7 @@ public class ChannelDao {
                         sendFailureMessage("The channel is already full!");
                         return Transaction.success(mutableData);
                     } else {
-                        Log.d("ChannelDao", channel.getThemeList().get("001"));
+                        // Log.d("ChannelDao", channel.getThemeList().get("001"));
                         member = new Member(
                                 channel.getThemeList().get(
                                         String.format("%03d", channel.getMemberCount() + 1)));
@@ -137,6 +138,10 @@ public class ChannelDao {
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                 if (!b) {
                     sendFailureMessage("Error! Cannot join the channel!");
+                }
+                if (!dataSnapshot.hasChildren()) {
+                    Log.d("joinChannel()", "(Confirmed) The channel doesn't exist!");
+                    sendFailureMessage("The channel doesn't exist!");
                 }
             }
         });

@@ -1,5 +1,6 @@
 package sustech.unknown.channelx;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -65,7 +66,9 @@ public class JoinChannelActivity extends AppCompatActivity {
 
     public void onSuccess(String message) {
         ToastUtil.makeToast(this, message);
-        setResult(RESULT_OK);
+        Intent intent = getIntent();
+        intent.putExtra(ChannelsActivity.CHANNEL_KEY_MESSAGE, this.channelId);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
