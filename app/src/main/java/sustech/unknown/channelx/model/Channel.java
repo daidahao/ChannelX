@@ -20,7 +20,7 @@ public class Channel {
     public Channel (String name, int imageId,long time){
         this.name=name;
         this.imageId=imageId;
-        this.startTime=time;
+        this.expiredTime = time;
     }
     public String getName() {
         return name;

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -36,26 +38,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import sustech.unknown.channelx.model.Channel;
+
+import static sustech.unknown.channelx.R.id.username;
+
 /**
  * Created by Administrator on 2017/12/16.
  */
 
 public class ChannelsActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
+
     private Channel[] Channels={
-            new Channel("me",R.drawable.profile,1000)
+           // new Channel("me",R.drawable.profile,1000)
     };   //当前用户的channels
 
     private List<Channel> channelList = new ArrayList<>();
-
     private ChannelsAdapter adapter;
-
     private SwipeRefreshLayout swipeRefresh;
-
     private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-
     private DatabaseReference mDatabase, mChannelReference;
     private String channelKey;
 
@@ -65,7 +67,6 @@ public class ChannelsActivity extends AppCompatActivity {
             "sustech.unknown.channelx.ChannelsActivity.CHANNEL_NAME";
     public static final int CREATE_CHANNEL_1_REQUEST = 666;
     public static final int JOIN_CHANNEL_REQUEST = 999;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +92,9 @@ public class ChannelsActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch(item.getItemId()){
-                    case R.id.profile:
-                        Intent intent =new Intent(ChannelsActivity.this,ProfileActivity.class);
-                        startActivity(intent);
+                    case R.id.signout:
+                         signout();
+                        //mDrawerLayout.closeDrawers();
                         break;
                     default:
                         mDrawerLayout.closeDrawers();
@@ -119,41 +120,41 @@ public class ChannelsActivity extends AppCompatActivity {
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
+            @Override //此处应该放置刷新需调用的函数，去网络请求最新数据
             public void onRefresh() {
                 refreshChannels();
             }
         });
     }
 
+
     private void refreshChannels() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initChannels();
-                        adapter.notifyDataSetChanged();
-                        swipeRefresh.setRefreshing(false);
-                    }
-                });
-            }
-        }).start();
+         new Thread(new Runnable(){
+             @Override
+             public void run(){
+                 try{
+                     Thread.sleep(500);
+                 }catch (InterruptedException e){
+                     e.printStackTrace();
+                 }
+                 runOnUiThread(new Runnable(){
+                     @Override
+                     public void run(){
+                         swipeRefresh.setRefreshing(false);
+                     }
+
+                 });
+
+             }
+
+         }).start();
     }
 
     private void initChannels() {
-        channelList.clear();
-        for (int i = 0; i < 50; i++) {
-            Random random = new Random();
-            int index = random.nextInt(Channels.length);
-            channelList.add(Channels[index]);
-        }
+        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
+        channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
+        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
+        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -173,9 +174,6 @@ public class ChannelsActivity extends AppCompatActivity {
                 break;
             case R.id.timeout:
                 Toast.makeText(this, "You clicked timeout", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.settings:
-                Toast.makeText(this, "You clicked settings", Toast.LENGTH_SHORT).show();
                 break;
             default:
         }
@@ -197,12 +195,23 @@ public class ChannelsActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         Log.d("onStart", "onStart is activated.");
 
-        if (mUser == null) {
+        if (mUser == null || mUser.isAnonymous()) {
             Log.d("onStart", "user is null.");
             login();
         }
         else {
             Log.d("onStart", mUser.getEmail());
+            // Log.d("onStart", CurrentUser.getUser().toString());
+
+//           TextView userName = (TextView) findViewById(R.id.username);
+//            if (mUser.getDisplayName() != null) {
+//                userName.setText(mUser.getDisplayName());
+//            }
+//
+//           TextView userEmail = (TextView) findViewById(R.id.mail);
+//            if (mUser.getEmail() != null) {
+//                userEmail.setText(mUser.getEmail());
+//            }
         }
 
     }
@@ -212,8 +221,51 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, CREATE_CHANNEL_1_REQUEST);
     }
 
+//    public void OnCreateChannel(View view) {
+//        // 初始化数据库
+//        mDatabase = FirebaseDatabase.getInstance().getReference();
+//        mChannelReference = mDatabase.child("channel");
+//
+//        EditText nameText = (EditText) findViewById(R.id.nameText);
+//
+//        DatabaseReference channelChild = mChannelReference.push();
+//        Channel channel = new Channel();
+//        channel.setName(nameText.getText().toString());
+//        channel.setCreatorId(mUser.getUid());
+//        channel.setStartTime(System.currentTimeMillis());
+//        channelKey = channelChild.getKey();
+//        channelChild.setValue(channel).addOnSuccessListener(
+//                new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        joinChannel();
+//                    }
+//                });
+//
+//    }
+//
+//    public void joinChannel() {
+//        Intent intent = new Intent(this, ChatActivity.class);
+//        EditText editText = (EditText) findViewById(R.id.nameText);
+//        String message = editText.getText().toString();
+//        intent.putExtra(CHANNEL_NAME_MESSAGE, "CHANNEL " + message);
+//        intent.putExtra(CHANNEL_KEY_MESSAGE, channelKey);
+//        startActivity(intent);
+//    }
+
+/***
+
+
+
+
+    public void OnJoinChannel(View view) {
+        EditText keyText = (EditText) findViewById(R.id.idText);
+       channelKey = keyText.getText().toString();
+        joinChannel();
+    }
+ ***/
     // 注销方法
-    public void signout(View view) {
+    public void signout() {
         mAuth.signOut();
         AuthUI authUI = AuthUI.getInstance();
         authUI.delete(this).addOnCompleteListener(
@@ -248,6 +300,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
+
             if (resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             } else {
@@ -255,7 +308,6 @@ public class ChannelsActivity extends AppCompatActivity {
             }
             return;
         }
-
         if (requestCode == CREATE_CHANNEL_1_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // DO SOMETHING
