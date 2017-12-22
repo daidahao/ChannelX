@@ -66,7 +66,7 @@ public class JoinChannelActivity extends AppCompatActivity {
 
     public void onSuccess(String message) {
         ToastUtil.makeToast(this, message);
-        Intent intent = getIntent();
+        Intent intent = new Intent();
         intent.putExtra(ChannelsActivity.CHANNEL_KEY_MESSAGE, this.channelId);
         setResult(RESULT_OK, intent);
         finish();

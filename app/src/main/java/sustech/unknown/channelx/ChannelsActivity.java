@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import sustech.unknown.channelx.model.Channel;
+import sustech.unknown.channelx.util.ToastUtil;
 
 import static sustech.unknown.channelx.R.id.username;
 
@@ -46,6 +47,7 @@ import static sustech.unknown.channelx.R.id.username;
  */
 
 public class ChannelsActivity extends AppCompatActivity {
+
     private DrawerLayout mDrawerLayout;
 
     private Channel[] Channels={
@@ -311,6 +313,18 @@ public class ChannelsActivity extends AppCompatActivity {
         if (requestCode == CREATE_CHANNEL_1_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // DO SOMETHING
+            }
+        }
+        if (requestCode == JOIN_CHANNEL_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Intent intent = new Intent(this, ChatActivity.class);
+                intent.putExtra(ChatActivity.CHANNEL_KEY_MESSAGE, data.getStringExtra(CHANNEL_KEY_MESSAGE));
+                startActivityForResult(intent, ChatActivity.ENTER_CHANNEL_REQUEST);
+            }
+        }
+        if (requestCode == ChatActivity.ENTER_CHANNEL_REQUEST) {
+            if (resultCode == RESULT_CANCELED) {
+                ToastUtil.makeToast(this, "Cannot enter the channel!");
             }
         }
     }

@@ -6,8 +6,6 @@ import android.widget.BaseAdapter;
 
 import java.util.HashMap;
 
-import sustech.unknown.channelx.model.ThemeList;
-
 /**
  * Created by dahao on 2017/12/22.
  */

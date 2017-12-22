@@ -28,9 +28,9 @@ import sustech.unknown.channelx.model.Member;
 
 public class ChannelDao {
 
-    private final String channelKey = "channel";
-    private final String membersKey = "members";
-    private final String themeKey = "theme";
+    public static final String channelKey = "channel";
+    public static final String membersKey = "members";
+    public static final String messagesKey = "messages";
     private Command onSuccessCommand;
     private Command onFailureCommand;
 
@@ -96,7 +96,6 @@ public class ChannelDao {
 //    }
 
     public void joinChannel(String channelId, final String userId, final String trueName) {
-        // getChannelChild("123").runTransaction();
         getChannelChild(channelId).runTransaction(
                 new Transaction.Handler() {
             @Override
@@ -118,7 +117,6 @@ public class ChannelDao {
                         sendFailureMessage("The channel is already full!");
                         return Transaction.success(mutableData);
                     } else {
-                        // Log.d("ChannelDao", channel.getThemeList().get("001"));
                         member = new Member(
                                 channel.getThemeList().get(
                                         String.format("%03d", channel.getMemberCount() + 1)));
@@ -131,6 +129,7 @@ public class ChannelDao {
                 channel.getMembers().put(userId, member);
                 channel.setMemberCount(channel.getMemberCount() + 1);
                 mutableData.setValue(channel);
+                // Send 1st message to the channel.
                 return Transaction.success(mutableData);
             }
 
@@ -161,6 +160,27 @@ public class ChannelDao {
         }
         ((MessageCommand)onSuccessCommand).setMessage(message);
         onSuccessCommand.execute();
+    }
+
+    public void readChannel(String channelId, Channel channel) {
+        getChannelChild(channelId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    Channel channel = dataSnapshot.getValue(Channel.class);
+                    sendSuccessMessage("Read the channel successfully!");
+                }
+                else {
+                    sendFailureMessage("Cannot read the channel!");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 //    public void joinChannel(final String channelId) {

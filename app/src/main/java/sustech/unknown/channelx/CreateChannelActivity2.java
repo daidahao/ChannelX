@@ -27,10 +27,7 @@ import sustech.unknown.channelx.dao.ThemeDao;
 import sustech.unknown.channelx.fragment.DatePickerFragment;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
-import sustech.unknown.channelx.model.DatabaseRoot;
-import sustech.unknown.channelx.model.ThemeList;
 import sustech.unknown.channelx.util.DateFormater;
-import sustech.unknown.channelx.util.HashMapAdapter;
 import sustech.unknown.channelx.util.ToastUtil;
 
 public class CreateChannelActivity2 extends AppCompatActivity {
