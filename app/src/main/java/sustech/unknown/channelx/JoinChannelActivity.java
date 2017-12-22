@@ -68,4 +68,12 @@ public class JoinChannelActivity extends AppCompatActivity {
     private void checkIfInChannel() {
 
     }
+
+    public void isInChannel() {
+
+    }
+
+    public void notInChannel() {
+
+    }
 }
