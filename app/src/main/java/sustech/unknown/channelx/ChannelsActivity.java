@@ -60,6 +60,8 @@ public class ChannelsActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private DatabaseReference mDatabase, mChannelReference;
     private String channelKey;
+    private TextView userLabel;
+    private TextView contactLabel;
 
     public static final String CHANNEL_KEY_MESSAGE =
             "sustech.unknown.channelx.ChannelsActivity.CHANNEL_KEY";
@@ -86,6 +88,9 @@ public class ChannelsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.menu);
         }
+
+        userLabel = navView.getHeaderView(0).findViewById(R.id.username);
+        contactLabel = navView.getHeaderView(0).findViewById(R.id.mail);
 
         navView.setCheckedItem(R.id.channels);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -201,6 +206,12 @@ public class ChannelsActivity extends AppCompatActivity {
         }
         else {
             Log.d("onStart", mUser.getEmail());
+            userLabel.setText(mUser.getDisplayName());
+            if (mUser.getEmail() == null || mUser.getEmail().trim().isEmpty()) {
+                contactLabel.setText(mUser.getPhoneNumber());
+            } else {
+                contactLabel.setText(mUser.getEmail());
+            }
             // Log.d("onStart", CurrentUser.getUser().toString());
 
 //           TextView userName = (TextView) findViewById(R.id.username);
