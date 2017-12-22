@@ -16,6 +16,11 @@ public class CreateChannelOnSuccessCommand implements Command {
 
     @Override
     public void execute() {
-        activity2.onSuccess();
+        activity2.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity2.onSuccess();
+            }
+        });
     }
 }

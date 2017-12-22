@@ -133,9 +133,8 @@ public class ChannelDao {
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                if (databaseError != null) {
-                    Log.d("joinChannel()", databaseError.getMessage());
-                    Log.d("joinChannel()", databaseError.getDetails());
+                if (!b) {
+                    sendFailureMessage("Error! Cannot join the channel!");
                 }
             }
         });

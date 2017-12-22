@@ -18,6 +18,11 @@ public class CreateChannelOnFailureCommand implements Command {
 
     @Override
     public void execute() {
-        activity2.onFailure();
+        activity2.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity2.onFailure();
+            }
+        });
     }
 }
