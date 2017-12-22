@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 
 import co.intentservice.chatui.ChatView;
+import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
@@ -61,12 +62,16 @@ public class ChatActivity extends AppCompatActivity {
                 new ReadChannelOnSuccessMessageCommand(this);
         ReadChannelOnFailureMessageCommand onFailureMessageCommand =
                 new ReadChannelOnFailureMessageCommand(this);
-        ChannelDao channelDao = new ChannelDao(onSuccessMessageCommand, onFailureMessageCommand);
+        ReadChannelObjectCommand objectCommand =
+                new ReadChannelObjectCommand(this);
+        ChannelDao channelDao =
+                new ChannelDao(onSuccessMessageCommand,
+                        onFailureMessageCommand, objectCommand);
         if (intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE) == null) {
             onReadChannelFailure("CHANNEL ID cannot be empty");
             return;
         }
-        channelDao.readChannel(intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE), channel);
+        channelDao.readChannel(intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE));
     }
 
     public void onReadChannelSuccess(String message) {
@@ -79,14 +84,37 @@ public class ChatActivity extends AppCompatActivity {
         finish();
     }
 
-    private void initializeToolbar(Intent intent) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    public void onReadChannelObject(Channel channel) {
+        this.channel = channel;
+        initializeChannel();
+    }
+
+    private void initializeChannel() {
+        if (channel == null) {
+            onReadChannelFailure("Cannot read the channel!");
+            return;
+        }
+        initializeToolbar(channel.getName() + " (" + channel.readKey() + ")");
+        initializeInput();
+    }
+
+    private void initializeInput() {
+        if (channel.getExpiredTime() < System.currentTimeMillis()) {
+            ToastUtil.makeToast(this, "The channel has expired!");
+        } else {
+            chatView.enableInput();
+        }
+    }
+
+    private void initializeToolbar(String title) {
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
-        // toolbarTitle.setText(intent.getStringExtra(Configuration.CHANNEL_NAME_MESSAGE));
-
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        if (title != null) {
+            toolbarTitle.setText(title);
+        }
     }
 
     private String getChannelKey(Intent intent) {

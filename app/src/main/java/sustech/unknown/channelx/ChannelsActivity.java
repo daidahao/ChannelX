@@ -263,7 +263,7 @@ public class ChannelsActivity extends AppCompatActivity {
         }
         if (requestCode == Configuration.ENTER_CHANNEL_REQUEST) {
             if (resultCode == RESULT_CANCELED) {
-                ToastUtil.makeToast(this, "Cannot enter the channel!");
+                // ToastUtil.makeToast(this, "Cannot enter the channel!");
             }
         }
     }

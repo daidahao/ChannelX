@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import sustech.unknown.channelx.Configuration;
 import sustech.unknown.channelx.command.Command;
 import sustech.unknown.channelx.command.MessageCommand;
+import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.model.Member;
@@ -28,6 +29,7 @@ public class ChannelDao {
 
     private Command onSuccessCommand;
     private Command onFailureCommand;
+    private ReadChannelObjectCommand objectCommand;
 
     public ChannelDao() {
 
@@ -41,6 +43,13 @@ public class ChannelDao {
     public ChannelDao(MessageCommand onSuccessCommand, Command onFailureCommand) {
         this.onSuccessCommand = onSuccessCommand;
         this.onFailureCommand = onFailureCommand;
+    }
+
+    public ChannelDao(MessageCommand onSuccessCommand, Command onFailureCommand,
+                      ReadChannelObjectCommand objectCommand) {
+        this.onSuccessCommand = onSuccessCommand;
+        this.onFailureCommand = onFailureCommand;
+        this.objectCommand = objectCommand;
     }
 
     private DatabaseReference getChannelRoot() {
@@ -157,14 +166,24 @@ public class ChannelDao {
         onSuccessCommand.execute();
     }
 
-    public void readChannel(String channelId, Channel channel) {
+    private void sendObject(Channel channel) {
+        if (objectCommand == null) {
+            return;
+        }
+        objectCommand.setChannel(channel);
+        objectCommand.execute();
+    }
+
+    public void readChannel(String channelId) {
         getChannelChild(channelId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
                     Channel channel = dataSnapshot.getValue(Channel.class);
+                    channel.writeKey(dataSnapshot.getKey());
                     sendSuccessMessage("Read the channel successfully!");
+                    sendObject(channel);
                 }
                 else {
                     sendFailureMessage("Cannot read the channel!");
