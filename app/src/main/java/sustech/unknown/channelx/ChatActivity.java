@@ -4,34 +4,36 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.TextView;
 
 
 import com.google.firebase.database.DatabaseReference;
 
 import co.intentservice.chatui.ChatView;
+import sustech.unknown.channelx.command.ChatMessageObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.MessagesDao;
+import sustech.unknown.channelx.listener.OnSentMessageListenerImpl;
 import sustech.unknown.channelx.model.Channel;
+import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.util.ToastUtil;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private DatabaseReference messagesReference;
-
     private ChatView chatView;
-
     private Channel channel;
+    private MessagesDao messagesDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        Intent intent = getIntent();
         initializeChatView();
 
 //        initializeToolbar(intent);
@@ -95,6 +97,25 @@ public class ChatActivity extends AppCompatActivity {
         }
         initializeToolbar(channel.getName() + " (" + channel.readKey() + ")");
         initializeInput();
+        initializeMessagesDao();
+        initializeMessagesListener();
+        initializeOnSentMessageListener();
+    }
+
+    private void initializeOnSentMessageListener() {
+        chatView.setOnSentMessageListener(
+                new OnSentMessageListenerImpl(messagesDao, chatView)
+        );
+    }
+
+    private void initializeMessagesDao() {
+        messagesDao = new MessagesDao(channel, CurrentUser.getUser().getUid());
+    }
+
+    private void initializeMessagesListener() {
+        Log.d("ChatActivity", "initializeMessagesListener()");
+        messagesDao.setChatMessageObjectCommand(new ChatMessageObjectCommand(chatView));
+        messagesDao.addListenerForChatMessage();
     }
 
     private void initializeInput() {

@@ -372,7 +372,7 @@ public class ChatView extends RelativeLayout {
 
     public void clearInput() {
         inputEditText.setText("");
-        inputEditText.setEnabled(true);
+        enableInput();
     }
 
     public void disableInput() {
