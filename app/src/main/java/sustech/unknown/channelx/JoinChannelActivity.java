@@ -8,13 +8,17 @@ import android.widget.EditText;
 
 import sustech.unknown.channelx.command.CheckChannelExistsOnFailureCommand;
 import sustech.unknown.channelx.command.CheckChannelExistsOnSuccessCommand;
+import sustech.unknown.channelx.command.CheckIfInChannelOnFailureCommand;
+import sustech.unknown.channelx.command.CheckIfInChannelOnSuccessCommand;
 import sustech.unknown.channelx.command.Command;
 import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.util.ToastUtil;
 
 public class JoinChannelActivity extends AppCompatActivity {
 
     private EditText editText;
+    private String channelId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,8 @@ public class JoinChannelActivity extends AppCompatActivity {
                 new ChannelDao(onSuccessCommand, onFailureCommand);
 
         if (!channelId.trim().isEmpty()){
-            channelDao.joinChannel(editText.getText().toString());
+            this.channelId = channelId.trim();
+            channelDao.joinChannel(this.channelId);
         } else {
             ToastUtil.makeToast(this, "Channel ID shouldn't be empty");
         }
@@ -66,14 +71,19 @@ public class JoinChannelActivity extends AppCompatActivity {
     }
 
     private void checkIfInChannel() {
-
+        Command onSuccessCommand =
+                new CheckIfInChannelOnSuccessCommand(this);
+        Command onFailureCommand =
+                new CheckIfInChannelOnFailureCommand(this);
+        ChannelDao channelDao = new ChannelDao(onSuccessCommand, onFailureCommand);
+        channelDao.checkInChannel(this.channelId, CurrentUser.getUser().getUid());
     }
 
     public void isInChannel() {
-
+        ToastUtil.makeToast(this, "You are already in the channel!");
     }
 
     public void notInChannel() {
-
+        ToastUtil.makeToast(this, "You are not in the channel!");
     }
 }

@@ -1,5 +1,6 @@
 package sustech.unknown.channelx.dao;
 
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -23,6 +24,7 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 public class ChannelDao {
 
     private final String channelKey = "channel";
+    private final String membersKey = "members";
     private Command onSuccessCommand;
     private Command onFailureCommand;
 
@@ -39,6 +41,15 @@ public class ChannelDao {
     private DatabaseReference getChannelRoot() {
         return DatabaseRoot.getRoot().child(channelKey);
     }
+
+    private DatabaseReference getChannelChild(String channelId) {
+        return getChannelRoot().child(channelId);
+    }
+
+    private DatabaseReference getChannelMembersChild(String channelId) {
+        return getChannelChild(channelId).child(membersKey);
+    }
+
 
     private DatabaseReference getChannelReference(String key) {
         return getChannelRoot().child(key);
@@ -68,36 +79,57 @@ public class ChannelDao {
         });
     }
 
-    public void joinChannel(Channel channel) {
-        if (channel.getCreatorId().equals(
-                CurrentUser.getUser().getUid())){
-        }
-    }
+//    public void joinChannel(Channel channel) {
+//        if (channel.getCreatorId().equals(
+//                CurrentUser.getUser().getUid())){
+//        }
+//    }
 
     public void joinChannel(final String channelId) {
         getChannelRoot().addListenerForSingleValueEvent(
-                new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(channelId)) {
-                    if (onSuccessCommand != null) {
-                        onSuccessCommand.execute();
-                    }
-                } else {
-                    if (onFailureCommand != null) {
-                        onFailureCommand.execute();
-                    }
-                }
-            }
+                new CheckExistsListener(channelId, onSuccessCommand, onFailureCommand)
+        );
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    public void checkInChannel(final String channelId, final String userId) {
+        getChannelMembersChild(channelId).addListenerForSingleValueEvent(
+                new CheckExistsListener(userId, onSuccessCommand, onFailureCommand)
+        );
     }
 
 
+}
+
+class CheckExistsListener implements ValueEventListener {
+
+    private Command onSuccessCommand;
+    private Command onFailureCommand;
+    private String childKey;
+
+    public CheckExistsListener(String childKey,
+                               Command onSuccessCommand, Command onFailureCommand) {
+        this.childKey = childKey;
+        this.onSuccessCommand = onSuccessCommand;
+        this.onFailureCommand = onFailureCommand;
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        if (dataSnapshot.hasChild(childKey)) {
+            if (onSuccessCommand != null) {
+                onSuccessCommand.execute();
+            }
+        } else {
+            if (onFailureCommand != null) {
+                onFailureCommand.execute();
+            }
+        }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
+    }
 }
 
 
