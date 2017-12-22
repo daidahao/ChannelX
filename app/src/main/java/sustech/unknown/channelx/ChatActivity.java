@@ -14,7 +14,6 @@ import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
-import sustech.unknown.channelx.listener.TypingListenerImpl;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.util.ToastUtil;
@@ -128,4 +127,14 @@ public class ChatActivity extends AppCompatActivity {
                 .child("messages");
     }
 
+    /**
+     * Created by dahao on 2017/12/16.
+     */
+
+    static class TypingListenerImpl implements ChatView.TypingListener {
+        @Override
+        public void userStartedTyping() {}
+        @Override
+        public void userStoppedTyping() {}
+    }
 }
