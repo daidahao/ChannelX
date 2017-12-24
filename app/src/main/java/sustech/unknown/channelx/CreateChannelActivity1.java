@@ -9,8 +9,6 @@ import android.widget.ImageView;
 
 public class CreateChannelActivity1 extends AppCompatActivity {
 
-    public static final int CREATE_CHANNEL_2_REQUEST = 666;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +36,8 @@ public class CreateChannelActivity1 extends AppCompatActivity {
 
     private void startCreateChannelActivity2(boolean anonymous){
         Intent intent = new Intent(this, CreateChannelActivity2.class);
-        intent.putExtra(CreateChannelActivity2.ANONYMOUS_EXTRA, anonymous);
-        startActivityForResult(intent, CREATE_CHANNEL_2_REQUEST);
+        intent.putExtra(Configuration.ANONYMOUS_EXTRA, anonymous);
+        startActivityForResult(intent, Configuration.CREATE_CHANNEL_2_REQUEST);
     }
 
     private void initializeToolbar() {
@@ -51,7 +49,7 @@ public class CreateChannelActivity1 extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CREATE_CHANNEL_2_REQUEST) {
+        if (requestCode == Configuration.CREATE_CHANNEL_2_REQUEST) {
             if (resultCode == RESULT_OK) {
                 setResult(RESULT_OK);
                 finish();

@@ -1,5 +1,6 @@
 package sustech.unknown.channelx;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -65,7 +66,9 @@ public class JoinChannelActivity extends AppCompatActivity {
 
     public void onSuccess(String message) {
         ToastUtil.makeToast(this, message);
-        setResult(RESULT_OK);
+        Intent intent = new Intent();
+        intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, this.channelId);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
@@ -76,39 +79,4 @@ public class JoinChannelActivity extends AppCompatActivity {
 
     }
 
-
-//    public void channelNotExists() {
-//        ToastUtil.makeToast(this, "Channel doesn't exist!");
-//    }
-//
-//    public void channelExists() {
-//        // ToastUtil.makeToast(this, "Channel does exist!");
-//        checkIfInChannel();
-//    }
-//
-//    private void checkIfInChannel() {
-//        Command onSuccessCommand =
-//                new CheckIfInChannelOnSuccessCommand(this);
-//        Command onFailureCommand =
-//                new CheckIfInChannelOnFailureCommand(this);
-//        ChannelDao channelDao = new ChannelDao(onSuccessCommand, onFailureCommand);
-//        channelDao.checkInChannel(this.channelId, CurrentUser.getUser().getUid());
-//    }
-//
-//    public void isInChannel() {
-//        ToastUtil.makeToast(this, "You are already in the channel!");
-//        finish();
-//    }
-//
-//    public void notInChannel() {
-//        // ToastUtil.makeToast(this, "You are not in the channel!");
-//
-//    }
-
-//    private void checkIfAnonymous() {
-//        Command onSuccessCommand =
-//                new CheckIfInChannelOnSuccessCommand(this);
-//        Command onFailureCommand =
-//                new CheckIfInChannelOnFailureCommand(this);
-//    }
 }
