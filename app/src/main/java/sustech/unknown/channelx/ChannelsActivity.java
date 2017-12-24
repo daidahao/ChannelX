@@ -1,5 +1,6 @@
 package sustech.unknown.channelx;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import sustech.unknown.channelx.model.Channel;
@@ -44,15 +46,22 @@ public class ChannelsActivity extends AppCompatActivity {
 
     private Channel[] Channels={
            // new Channel("me",R.drawable.profile,1000)
-    };   //当前用户的channels
+    };
+    //当前用户的channels
+    private Channel[] expireChannels={
+    };//过期channels
 
     private List<Channel> channelList = new ArrayList<>();
+    private List<Channel> expire_channelList=new ArrayList<>();
+
     private ChannelsAdapter adapter;
+    private ExpireChannelsAdapter expireAdapter;
     private SwipeRefreshLayout swipeRefresh;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private TextView userLabel;
     private TextView contactLabel;
+    private boolean clock=true;
 
 
     @Override
@@ -103,11 +112,8 @@ public class ChannelsActivity extends AppCompatActivity {
         });
 
         initChannels();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(this,1);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new ChannelsAdapter(channelList);
-        recyclerView.setAdapter(adapter);
+        initExpireChannels();
+        showCurrentChannels();
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -142,15 +148,33 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
     private void initChannels() {
-        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
-        channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
+
         channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
         channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
+    }
+    private void initExpireChannels(){
+        expire_channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
+        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
+    }
+    public void showExprieChannels(){
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,1);
+        recyclerView.setLayoutManager(layoutManager);
+        expireAdapter = new ExpireChannelsAdapter(expire_channelList);
+        recyclerView.setAdapter(expireAdapter);
+
+    }
+    public void showCurrentChannels(){
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,1);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new ChannelsAdapter(channelList);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -164,7 +188,18 @@ public class ChannelsActivity extends AppCompatActivity {
                 onJoinChannel();
                 break;
             case R.id.timeout:
-                Toast.makeText(this, "You clicked timeout", Toast.LENGTH_SHORT).show();
+                if(clock){
+                    showExprieChannels();
+                    //MenuItem itemfindc=findViewById(R.id.findc);
+                    //itemfindc.setIcon(R.drawable.timeout);
+                    clock=false;
+                }else{
+                    showCurrentChannels();
+                    //MenuItem itemfindc=findViewById(R.id.findc);
+                    //itemfindc.setIcon(R.drawable.timeout);
+                    clock=true;
+                }
+
                 break;
             default:
         }
