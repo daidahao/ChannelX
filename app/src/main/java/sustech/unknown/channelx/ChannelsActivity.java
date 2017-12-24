@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -51,6 +52,9 @@ public class ChannelsActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefresh;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+    private TextView userLabel;
+    private TextView contactLabel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +65,7 @@ public class ChannelsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         ActionBar actionBar = getSupportActionBar();
 
 
@@ -71,12 +75,16 @@ public class ChannelsActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.menu);
         }
 
+        userLabel = navView.getHeaderView(0).findViewById(R.id.username);
+        contactLabel = navView.getHeaderView(0).findViewById(R.id.mail);
+
         navView.setCheckedItem(R.id.channels);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch(item.getItemId()){
                     case R.id.signout:
+                         navView.setCheckedItem(R.id.channels);
                          signout();
                         //mDrawerLayout.closeDrawers();
                         break;
@@ -180,12 +188,18 @@ public class ChannelsActivity extends AppCompatActivity {
         Log.d("onStart", "onStart is activated.");
 
         if (mUser == null || mUser.isAnonymous()) {
-            Log.d("onStart", "user is null.");
+            Log.d("onSt art", "user is null.");
             login();
         }
         else {
             Log.d("onStart", mUser.getEmail());
             testLoadChannels();
+            userLabel.setText(mUser.getDisplayName());
+            if (mUser.getEmail() == null || mUser.getEmail().trim().isEmpty()) {
+                contactLabel.setText(mUser.getPhoneNumber());
+            } else {
+                contactLabel.setText(mUser.getEmail());
+            }
             // Log.d("onStart", CurrentUser.getUser().toString());
 
 //           TextView userName = (TextView) findViewById(R.id.username);

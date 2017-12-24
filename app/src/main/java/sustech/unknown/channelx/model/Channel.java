@@ -22,6 +22,7 @@ public class Channel {
     private Map<String, Member> members = new HashMap<>();
     private Map<String, String> themeList = new HashMap<>();
     private Map<String, ChatMessage> messages = new HashMap<>();
+    private String photoUrl;
 
     public Channel(){
         this.isDestroyed = false;
