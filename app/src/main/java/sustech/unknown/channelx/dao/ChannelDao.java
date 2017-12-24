@@ -1,5 +1,6 @@
 package sustech.unknown.channelx.dao;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -69,9 +70,11 @@ public class ChannelDao {
         return getChannelRoot().child(key);
     }
 
-    public void createChannel(final Channel channel) {
+    public void createChannel(final Channel channel,final Uri uri) {
         DatabaseReference channelChild = getChannelRoot().push();
         channel.writeKey(channelChild.getKey());
+        StorageDao storageDao = new StorageDao();
+        storageDao.uploadChannelPhoto(uri,channel.readKey());
         addListenersForTask(channelChild.setValue(channel));
     }
 

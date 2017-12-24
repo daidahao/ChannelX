@@ -2,6 +2,7 @@ package sustech.unknown.channelx;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -21,19 +22,26 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import sustech.unknown.channelx.dao.LoadChannelDao;
+import sustech.unknown.channelx.dao.StorageDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.util.ToastUtil;
 
@@ -63,6 +71,14 @@ public class ChannelsActivity extends AppCompatActivity {
     private TextView userLabel;
     private TextView contactLabel;
     private boolean clock=true;
+
+    private DatabaseReference mDatabase, mChannelReference;
+    private String channelKey;
+    private Uri uri;
+    private CircleImageView headphoto;
+
+    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
+    private static final int PHOTO_REQUEST_CUT = 3;// 结果
 
 
     @Override
@@ -123,6 +139,8 @@ public class ChannelsActivity extends AppCompatActivity {
                 refreshChannels();
             }
         });
+
+
     }
 
 
@@ -296,9 +314,14 @@ public class ChannelsActivity extends AppCompatActivity {
 
         if (requestCode == Configuration.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                headphoto =findViewById(R.id.icon_image);
+                StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+user.getUid()+".jpg");
+                Glide.with(this /* context */)
+                        .using(new FirebaseImageLoader())
+                        .load(ref)
+                        .into(headphoto);
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
             }
@@ -322,7 +345,53 @@ public class ChannelsActivity extends AppCompatActivity {
                 // ToastUtil.makeToast(this, "Cannot enter the channel!");
             }
         }
+        if (requestCode == PHOTO_REQUEST_GALLERY) {
+            // 从相册返回的数据
+            if (data != null) {
+                // 得到图片的全路径
+                uri = data.getData();
+                //crop(uri);
+                headphoto = findViewById(R.id.icon_image);
+                headphoto.setImageURI(uri);
+                StorageDao dao = new StorageDao();
+                dao.uploadUserPhoto(uri, mAuth.getUid());
+
+            }
+        }
     }
+    private  void crop(Uri uri) {
+        // 裁剪图片意图
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // 裁剪框的比例，1：1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // 裁剪后输出图片的尺寸大小
+        intent.putExtra("outputX", 250);
+        intent.putExtra("outputY", 250);
+
+        intent.putExtra("outputFormat", "JPEG");// 图片格式
+        intent.putExtra("noFaceDetection", true);// 取消人脸识别
+        intent.putExtra("return-data", true);
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
+        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+    }
+
+    /*
+ * 从相册获取
+ */
+    public  void  gallery(View view) {
+
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+    }
+
+// I am a dashadiao
+
 
 
 }

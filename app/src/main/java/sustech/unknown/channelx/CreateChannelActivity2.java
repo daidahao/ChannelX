@@ -2,6 +2,7 @@ package sustech.unknown.channelx;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,14 +16,18 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import sustech.unknown.channelx.command.CreateChannelOnFailureCommand;
 import sustech.unknown.channelx.command.CreateChannelOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.StorageDao;
 import sustech.unknown.channelx.dao.ThemeDao;
 import sustech.unknown.channelx.fragment.DatePickerFragment;
 import sustech.unknown.channelx.model.Channel;
@@ -43,6 +48,14 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     private HashMap<String, Map> allThemesMap;
 
 
+    private CircleImageView photoimage;
+    private Uri uri;
+
+    public static String ANONYMOUS_EXTRA =
+            "sustech.unknown.channelx.CreateChannelActivity2.ANONYMOUS_EXTRA";
+    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
+    private static final int PHOTO_REQUEST_CUT = 3;// 结果
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,16 +67,33 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         initializeDateText();
         initializeNameText();
         initializeExpiredSwitch();
-
+        photoimage = findViewById(R.id.channelImageView);
+        photoimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gallery();
+            }
+        });
     }
+
+
 
     private void initializeExpiredSwitch() {
         expriedSwitch = findViewById(R.id.expiredSwitch);
         expriedSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        setVisible(dateText, isChecked);
+                    }
+                });
+    }
+    private void initializeChannelImageView() {
+
+        photoimage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setVisible(dateText, isChecked);
+            public void onClick(View v) {
+//                gallery();
             }
         });
     }
@@ -77,6 +107,10 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     }
 
     private void initializeNameText() {
+        nameText = findViewById(R.id.nameText);
+    }
+
+    private void initialize() {
         nameText = findViewById(R.id.nameText);
     }
 
@@ -161,7 +195,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
                 new CreateChannelOnFailureCommand(this);
         ChannelDao channelDao =
                 new ChannelDao(onSuccessCommand, onFailureCommand);
-        channelDao.createChannel(channel);
+        channelDao.createChannel(channel,uri);
     }
 
 
@@ -221,5 +255,51 @@ public class CreateChannelActivity2 extends AppCompatActivity {
                 "Channel cannot be created! Please check your connection!");
         setResult(RESULT_CANCELED);
         finish();
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PHOTO_REQUEST_GALLERY) {
+            // 从相册返回的数据
+            if (data != null) {
+                // 得到图片的全路径
+                uri = data.getData();
+                photoimage.setImageURI(uri);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    private  void crop(Uri uri) {
+        // 裁剪图片意图
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // 裁剪框的比例，1：1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // 裁剪后输出图片的尺寸大小
+        intent.putExtra("outputX", 250);
+        intent.putExtra("outputY", 250);
+
+        intent.putExtra("outputFormat", "JPEG");// 图片格式
+        intent.putExtra("noFaceDetection", true);// 取消人脸识别
+        intent.putExtra("return-data", true);
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
+        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+    }
+
+    /*
+ * 从相册获取
+ */
+    public  void  gallery() {
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
     }
 }
