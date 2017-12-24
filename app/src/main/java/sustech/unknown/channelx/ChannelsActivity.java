@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sustech.unknown.channelx.dao.LoadChannelDao;
+import sustech.unknown.channelx.command.ReadChannelsListObjectCommand;
+import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.ChannelsListDao;
 import sustech.unknown.channelx.model.Channel;
-import sustech.unknown.channelx.util.ToastUtil;
+import sustech.unknown.channelx.model.CurrentUser;
 
 /**
  * Created by Administrator on 2017/12/16.
@@ -50,10 +52,10 @@ public class ChannelsActivity extends AppCompatActivity {
     private List<Channel> channelList = new ArrayList<>();
     private ChannelsAdapter adapter;
     private SwipeRefreshLayout swipeRefresh;
-    private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private TextView userLabel;
     private TextView contactLabel;
+    private ChannelsListDao channelsListDao;
 
 
     @Override
@@ -103,7 +105,7 @@ public class ChannelsActivity extends AppCompatActivity {
             }
         });
 
-        initChannels();
+        // initChannels();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(this,1);
         recyclerView.setLayoutManager(layoutManager);
@@ -142,12 +144,12 @@ public class ChannelsActivity extends AppCompatActivity {
          }).start();
     }
 
-    private void initChannels() {
-        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
-        channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
-        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
-        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
-    }
+//    private void initChannels() {
+//        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
+//        channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
+//        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
+//        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
+//    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
@@ -183,41 +185,43 @@ public class ChannelsActivity extends AppCompatActivity {
         super.onStart();
 
         // 检验当前是否登陆
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
         Log.d("onStart", "onStart is activated.");
-
-        if (mUser == null || mUser.isAnonymous()) {
-            Log.d("onSt art", "user is null.");
+        if (!CurrentUser.isLogin()) {
+            Log.d("onStart", "user is null.");
             login();
         }
         else {
-            Log.d("onStart", mUser.getEmail());
-            testLoadChannels();
-            userLabel.setText(mUser.getDisplayName());
-            if (mUser.getEmail() == null || mUser.getEmail().trim().isEmpty()) {
-                contactLabel.setText(mUser.getPhoneNumber());
-            } else {
-                contactLabel.setText(mUser.getEmail());
-            }
-            // Log.d("onStart", CurrentUser.getUser().toString());
-
-//           TextView userName = (TextView) findViewById(R.id.username);
-//            if (mUser.getDisplayName() != null) {
-//                userName.setText(mUser.getDisplayName());
-//            }
-//
-//           TextView userEmail = (TextView) findViewById(R.id.mail);
-//            if (mUser.getEmail() != null) {
-//                userEmail.setText(mUser.getEmail());
-//            }
+            FirebaseUser user = CurrentUser.getUser();
+            Log.d("onStart", user.getEmail());
+            setUserLabel(user);
+            initializeChannelsList(user.getUid());
         }
-
     }
 
-    private void testLoadChannels() {
-        LoadChannelDao loadChannelDao = new LoadChannelDao();
-        loadChannelDao.loadAllChannels();
+    private void setUserLabel(FirebaseUser user) {
+        userLabel.setText(user.getDisplayName());
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            contactLabel.setText(user.getPhoneNumber());
+        } else {
+            contactLabel.setText(user.getEmail());
+        }
+    }
+
+    private void initializeChannelsList(String userId) {
+        if (channelsListDao == null) {
+            ReadChannelsListObjectCommand objectCommand =
+                    new ReadChannelsListObjectCommand(this);
+            channelsListDao = new ChannelsListDao(objectCommand, userId);
+            channelsListDao.readAllChannels();
+        }
+    }
+
+    public void addChannel(Channel channel) {
+        if (channelList.contains(channel)) {
+            return;
+        }
+        channelList.add(channel);
+        adapter.notifyDataSetChanged();
     }
 
     public void OnCreateChannel(View view) {
@@ -227,7 +231,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
     // 注销方法
     public void signout() {
-        mAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
         AuthUI authUI = AuthUI.getInstance();
         authUI.delete(this).addOnCompleteListener(
                 new OnCompleteListener<Void>() {
@@ -241,6 +245,7 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
     public void login() {
+        clearChannelsList();
         // 选择登陆验证方式
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
@@ -255,6 +260,11 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, Configuration.RC_SIGN_IN);
     }
 
+    private void clearChannelsList() {
+        channelsListDao = null;
+        channelList.clear();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -263,7 +273,8 @@ public class ChannelsActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                clearChannelsList();
+                // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
             }
@@ -271,7 +282,8 @@ public class ChannelsActivity extends AppCompatActivity {
         }
         if (requestCode == Configuration.CREATE_CHANNEL_1_REQUEST) {
             if (resultCode == RESULT_OK) {
-                // DO SOMETHING
+                String channelKey = data.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE);
+                joinChannel(channelKey);
             }
         }
         if (requestCode == Configuration.JOIN_CHANNEL_REQUEST) {
@@ -287,6 +299,17 @@ public class ChannelsActivity extends AppCompatActivity {
                 // ToastUtil.makeToast(this, "Cannot enter the channel!");
             }
         }
+    }
+
+    private void joinChannel(String channelKey) {
+        if (channelKey == null || channelKey.trim().isEmpty()) {
+            return;
+        }
+        ChannelDao channelDao = new ChannelDao();
+        channelDao.joinChannel(channelKey,
+                CurrentUser.getUser().getUid(),
+                CurrentUser.getUser().getDisplayName()
+        );
     }
 
 

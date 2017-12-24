@@ -51,7 +51,10 @@ public class CreateChannelActivity1 extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Configuration.CREATE_CHANNEL_2_REQUEST) {
             if (resultCode == RESULT_OK) {
-                setResult(RESULT_OK);
+                Intent intent = getIntent();
+                String channelKey = data.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE);
+                intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channelKey);
+                setResult(RESULT_OK, intent);
                 finish();
             }
             else if (resultCode == RESULT_CANCELED) {
