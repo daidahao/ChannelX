@@ -58,7 +58,7 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
                 int position = holder.getAdapterPosition();
                 Channel channel = mChannelList.get(position);
                 Intent intent = new Intent(mContext, ChatActivity.class);
-               // intent.putExtra(ChatActivity.CHANNEL_NAME, channel.getName());
+                intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
                 mContext.startActivity(intent);
             }
         });

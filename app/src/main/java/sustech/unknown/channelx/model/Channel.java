@@ -24,6 +24,14 @@ public class Channel {
     private Map<String, ChatMessage> messages = new HashMap<>();
     private String photoUrl;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == this.getClass()) {
+            return ((Channel)obj).readKey().equals(readKey());
+        }
+        return super.equals(obj);
+    }
+
     public Channel(){
         this.isDestroyed = false;
     }

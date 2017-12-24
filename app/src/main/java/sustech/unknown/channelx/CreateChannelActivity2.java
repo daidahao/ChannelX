@@ -46,6 +46,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     private Calendar calendar;
     private TextView themeTextView;
     private HashMap<String, Map> allThemesMap;
+    private Channel channel;
 
 
     private CircleImageView photoimage;
@@ -171,7 +172,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         if (!checkAllFields()) {
             return;
         }
-        Channel channel = new Channel();
+        channel = new Channel();
         channel.setAnonymous(anonymous);
         channel.setCreatorId(CurrentUser.getUser().getUid());
         channel.setStartTime(System.currentTimeMillis());
@@ -246,7 +247,10 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     public void onSuccess() {
         ToastUtil.makeToast(this,
                 "Channel was created successfully!");
-        setResult(RESULT_OK);
+        Intent intent = getIntent();
+        intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
+        Log.d("CreateChannelActivity2", channel.readKey());
+        setResult(RESULT_OK, intent);
         finish();
     }
 

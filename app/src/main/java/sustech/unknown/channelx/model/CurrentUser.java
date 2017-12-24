@@ -13,4 +13,8 @@ public class CurrentUser {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    public static boolean isLogin() {
+        return !(getUser() == null || getUser().isAnonymous());
+    }
+
 }
