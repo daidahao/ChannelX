@@ -1,9 +1,9 @@
 package sustech.unknown.channelx.model;
 
+import android.net.Uri;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import co.intentservice.chatui.models.ChatMessage;
 
 /**
  * Created by dahao on 2017/12/14.
@@ -19,10 +19,11 @@ public class Channel {
     private String key;
     private boolean isDestroyed;
     private int memberCount;
+
+
+
     private Map<String, Member> members = new HashMap<>();
     private Map<String, String> themeList = new HashMap<>();
-    private Map<String, ChatMessage> messages = new HashMap<>();
-    private String photoUrl;
 
     public Channel(){
         this.isDestroyed = false;
@@ -135,11 +136,4 @@ public class Channel {
         this.themeList = themeList;
     }
 
-    public Map<String, ChatMessage> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(Map<String, ChatMessage> messages) {
-        this.messages = messages;
-    }
 }

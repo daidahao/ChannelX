@@ -26,7 +26,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import co.intentservice.chatui.fab.FloatingActionsMenu;
-import co.intentservice.chatui.fab.SendFloatingActionButton;
 import co.intentservice.chatui.models.ChatMessage;
 import co.intentservice.chatui.models.ChatMessage.Type;
 import co.intentservice.chatui.viewholders.MessageViewHolder;
@@ -372,19 +371,11 @@ public class ChatView extends RelativeLayout {
 
     public void clearInput() {
         inputEditText.setText("");
-        enableInput();
+        inputEditText.setEnabled(true);
     }
 
     public void disableInput() {
         inputEditText.setEnabled(false);
-        actionsMenu.getSendButton().setClickable(false);
-        actionsMenu.getSendButton().setEnabled(false);
-    }
-
-    public void enableInput() {
-        inputEditText.setEnabled(true);
-        actionsMenu.getSendButton().setClickable(true);
-        actionsMenu.getSendButton().setEnabled(true);
     }
 
     public void addMessage(ChatMessage chatMessage) {

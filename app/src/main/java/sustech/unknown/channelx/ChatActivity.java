@@ -9,124 +9,57 @@ import android.widget.TextView;
 
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import co.intentservice.chatui.ChatView;
-import co.intentservice.chatui.models.ChatMessage;
-import sustech.unknown.channelx.command.ChatMessageObjectCommand;
-import sustech.unknown.channelx.command.ReadChannelObjectCommand;
-import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
-import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
-import sustech.unknown.channelx.command.SendMessageOnFailureCommand;
-import sustech.unknown.channelx.command.SendMessageOnSuccessCommand;
-import sustech.unknown.channelx.dao.ChannelDao;
-import sustech.unknown.channelx.dao.MessagesDao;
-import sustech.unknown.channelx.model.Channel;
-import sustech.unknown.channelx.model.CurrentUser;
+import sustech.unknown.channelx.listener.MessagesReferenceListener;
+import sustech.unknown.channelx.listener.OnSentMessageListenerImpl;
+import sustech.unknown.channelx.listener.TypingListenerImpl;
 import sustech.unknown.channelx.model.DatabaseRoot;
-import sustech.unknown.channelx.util.ToastUtil;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private DatabaseReference messagesReference;
+
     private ChatView chatView;
-    private Channel channel;
-    private MessagesDao messagesDao;
+
+    public static String CHANNEL_KEY_MESSAGE =
+            "sustech.unknown.channelx.ChatActivity.CHANNEL_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        initializeChatView();
-        readChannelFromIntent(getIntent());
-    }
+        Intent intent = getIntent();
 
-    private void initializeChatView() {
-        chatView = findViewById(R.id.chat_view);
-        chatView.disableInput();
-        chatView.setTypingListener(new TypingListenerImpl());
-    }
+        initializeToolbar(intent);
 
-    private void readChannelFromIntent(Intent intent) {
-        ReadChannelOnSuccessMessageCommand onSuccessMessageCommand =
-                new ReadChannelOnSuccessMessageCommand(this);
-        ReadChannelOnFailureMessageCommand onFailureMessageCommand =
-                new ReadChannelOnFailureMessageCommand(this);
-        ReadChannelObjectCommand objectCommand =
-                new ReadChannelObjectCommand(this);
-        ChannelDao channelDao =
-                new ChannelDao(onSuccessMessageCommand,
-                        onFailureMessageCommand, objectCommand);
-        if (intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE) == null) {
-            onReadChannelFailure("CHANNEL ID cannot be empty");
-            return;
-        }
-        channelDao.readChannel(intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE));
-    }
+        messagesReference = getMessagesReference(intent);
+        chatView = (ChatView) findViewById(R.id.chat_view);
 
-    public void onReadChannelSuccess(String message) {
-        ToastUtil.makeToast(this, message);
-    }
-
-    public void onReadChannelFailure(String message) {
-        ToastUtil.makeToast(this, message);
-        setResult(RESULT_CANCELED);
-        finish();
-    }
-
-    public void onReadChannelObject(Channel channel) {
-        this.channel = channel;
-        initializeChannel();
-    }
-
-    private void initializeChannel() {
-        if (channel == null) {
-            onReadChannelFailure("Cannot read the channel!");
-            return;
-        }
-        initializeToolbar(channel.getName() + " (" + channel.readKey() + ")");
-        initializeInput();
-        initializeMessagesDao();
-        initializeMessagesListener();
-        initializeOnSentMessageListener();
-    }
-
-    private void initializeOnSentMessageListener() {
+        // 增加message的监听器，可以在启动时加载ChatView，且在有新聊天消息时更新ChatView
+        messagesReference.addChildEventListener(new MessagesReferenceListener(chatView));
+        // 在发送消息时触发该监听器
         chatView.setOnSentMessageListener(
-                new OnSentMessageListenerImpl()
-        );
+                new OnSentMessageListenerImpl(messagesReference, chatView));
+
+        chatView.setTypingListener(new TypingListenerImpl());
+
     }
 
-    private void initializeMessagesDao() {
-        messagesDao = new MessagesDao(channel, CurrentUser.getUser().getUid());
-    }
-
-    private void initializeMessagesListener() {
-        Log.d("ChatActivity", "initializeMessagesListener()");
-        messagesDao.setChatMessageObjectCommand(new ChatMessageObjectCommand(chatView));
-        messagesDao.addListenerForChatMessage();
-    }
-
-    private void initializeInput() {
-        if (channel.getExpiredTime() < System.currentTimeMillis()) {
-            ToastUtil.makeToast(this, "The channel has expired!");
-        } else {
-            chatView.enableInput();
-        }
-    }
-
-    private void initializeToolbar(String title) {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+    private void initializeToolbar(Intent intent) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        if (title != null) {
-            toolbarTitle.setText(title);
-        }
+        TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        toolbarTitle.setText(intent.getStringExtra(ChannelsActivity.CHANNEL_NAME_MESSAGE));
+
     }
 
     private String getChannelKey(Intent intent) {
-        return intent.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE);
+        return intent.getStringExtra(CHANNEL_KEY_MESSAGE);
     }
 
     private DatabaseReference getMessagesReference(Intent intent) {
@@ -136,27 +69,4 @@ public class ChatActivity extends AppCompatActivity {
                 .child("messages");
     }
 
-    /**
-     * Created by dahao on 2017/12/16.
-     */
-
-    class TypingListenerImpl implements ChatView.TypingListener {
-        @Override
-        public void userStartedTyping() {}
-        @Override
-        public void userStoppedTyping() {}
-    }
-
-    class OnSentMessageListenerImpl implements ChatView.OnSentMessageListener {
-        @Override
-        public boolean sendMessage(ChatMessage chatMessage) {
-            // 暂时禁用输入框
-            chatView.disableInput();
-            // 在写入成功时触发监听器，清楚输入框的内容
-            messagesDao.setOnSuccessCommand(new SendMessageOnSuccessCommand(chatView));
-            messagesDao.setOnFailureCommand(new SendMessageOnFailureCommand(chatView));
-            messagesDao.addMessage(chatMessage);
-            return true;
-        }
-    }
 }
