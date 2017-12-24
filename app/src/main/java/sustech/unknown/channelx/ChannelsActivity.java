@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import sustech.unknown.channelx.dao.LoadChannelDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.util.ToastUtil;
 
@@ -227,6 +228,7 @@ public class ChannelsActivity extends AppCompatActivity {
         }
         else {
             Log.d("onStart", mUser.getEmail());
+            testLoadChannels();
             userLabel.setText(mUser.getDisplayName());
             if (mUser.getEmail() == null || mUser.getEmail().trim().isEmpty()) {
                 contactLabel.setText(mUser.getPhoneNumber());
@@ -246,6 +248,11 @@ public class ChannelsActivity extends AppCompatActivity {
 //            }
         }
 
+    }
+
+    private void testLoadChannels() {
+        LoadChannelDao loadChannelDao = new LoadChannelDao();
+        loadChannelDao.loadAllChannels();
     }
 
     public void OnCreateChannel(View view) {
