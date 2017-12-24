@@ -21,7 +21,15 @@ public class Channel {
     private int memberCount;
 
 
+    public Uri getDownloadUrl() {
+        return downloadUrl;
+    }
 
+    public void setDownloadUrl(Uri downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    private Uri downloadUrl;
     private Map<String, Member> members = new HashMap<>();
     private Map<String, String> themeList = new HashMap<>();
 
