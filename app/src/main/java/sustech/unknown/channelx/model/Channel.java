@@ -27,7 +27,7 @@ public class Channel {
     @Override
     public boolean equals(Object obj) {
         if (obj.getClass() == this.getClass()) {
-            return ((Channel)obj).readKey() == readKey();
+            return ((Channel)obj).readKey().equals(readKey());
         }
         return super.equals(obj);
     }
