@@ -17,15 +17,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import sustech.unknown.channelx.command.CreateChannelOnFailureCommand;
 import sustech.unknown.channelx.command.CreateChannelOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.ThemeDao;
 import sustech.unknown.channelx.fragment.DatePickerFragment;
-import sustech.unknown.channelx.listener.ThemeReferenceListener;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
-import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.util.DateFormater;
 import sustech.unknown.channelx.util.ToastUtil;
 
@@ -39,9 +40,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     private Spinner spinner;
     private Calendar calendar;
     private TextView themeTextView;
-
-    public static String ANONYMOUS_EXTRA =
-            "sustech.unknown.channelx.CreateChannelActivity2.ANONYMOUS_EXTRA";
+    private HashMap<String, Map> allThemesMap;
 
 
     @Override
@@ -106,7 +105,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
 
     private void checkAnonymous() {
         Intent intent = getIntent();
-        anonymous = intent.getBooleanExtra(ANONYMOUS_EXTRA, false);
+        anonymous = intent.getBooleanExtra(Configuration.ANONYMOUS_EXTRA, false);
         spinner = findViewById(R.id.spinner);
         themeTextView = findViewById(R.id.themeTextView);
         setVisible(themeTextView, anonymous);
@@ -116,21 +115,21 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         }
     }
 
-    private void loadThemesList(
-            ArrayList<String> themesList,
-            ArrayAdapter adapter) {
-        DatabaseRoot.getRoot()
-                .child("theme").
-                addChildEventListener(
-                        new ThemeReferenceListener(themesList, adapter));
+
+    private void loadALlThemesList(ArrayList<String> allThemesList,
+                                   HashMap<String, Map> allThemesMap,
+                                   ArrayAdapter adapter) {
+        ThemeDao themeDao = new ThemeDao(allThemesList, allThemesMap, adapter);
+        themeDao.readAllThemesList();
     }
 
 
     private void initializeSpinner() {
-        ArrayList<String> themesList = new ArrayList<String>();
+        ArrayList<String> allThemesList = new ArrayList<String>();
+        allThemesMap = new HashMap<>();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.support_simple_spinner_dropdown_item, themesList);
-        loadThemesList(themesList, adapter);
+                R.layout.support_simple_spinner_dropdown_item, allThemesList);
+        loadALlThemesList(allThemesList, allThemesMap, adapter);
         spinner.setAdapter(adapter);
     }
 
@@ -146,8 +145,10 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         channel.setExpiredTime(calendar.getTimeInMillis());
         channel.setGroup(!groupSwitch.isChecked());
         channel.setDestroyed(false);
+        channel.setMemberCount(0);
         if (anonymous) {
             channel.setTheme(spinner.getSelectedItem().toString());
+            channel.setThemeList(allThemesMap.get(spinner.getSelectedItem().toString()));
             Log.d("OnCreateButton", spinner.getSelectedItem().toString());
         }
         if (!expriedSwitch.isChecked()) {
@@ -207,12 +208,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-
-    public void joinChannel(Channel channel) {
-        Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra(ChatActivity.CHANNEL_KEY_MESSAGE, channel.readKey());
-        startActivity(intent);
-    }
 
     public void onSuccess() {
         ToastUtil.makeToast(this,

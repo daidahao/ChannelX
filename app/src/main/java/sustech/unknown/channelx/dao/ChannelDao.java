@@ -9,12 +9,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import sustech.unknown.channelx.Configuration;
 import sustech.unknown.channelx.command.Command;
+import sustech.unknown.channelx.command.MessageCommand;
+import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.model.Channel;
-import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
+import sustech.unknown.channelx.model.Member;
 
 /**
  * Created by dahao on 2017/12/20.
@@ -22,9 +27,9 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 
 public class ChannelDao {
 
-    private final String channelKey = "channel";
     private Command onSuccessCommand;
     private Command onFailureCommand;
+    private ReadChannelObjectCommand objectCommand;
 
     public ChannelDao() {
 
@@ -35,10 +40,30 @@ public class ChannelDao {
         this.onFailureCommand = onFailureCommand;
     }
 
+    public ChannelDao(MessageCommand onSuccessCommand, Command onFailureCommand) {
+        this.onSuccessCommand = onSuccessCommand;
+        this.onFailureCommand = onFailureCommand;
+    }
+
+    public ChannelDao(MessageCommand onSuccessCommand, Command onFailureCommand,
+                      ReadChannelObjectCommand objectCommand) {
+        this.onSuccessCommand = onSuccessCommand;
+        this.onFailureCommand = onFailureCommand;
+        this.objectCommand = objectCommand;
+    }
 
     private DatabaseReference getChannelRoot() {
-        return DatabaseRoot.getRoot().child(channelKey);
+        return DatabaseRoot.getRoot().child(Configuration.channelKey);
     }
+
+    private DatabaseReference getChannelChild(String channelId) {
+        return getChannelRoot().child(channelId);
+    }
+
+    private DatabaseReference getChannelMembersChild(String channelId) {
+        return getChannelChild(channelId).child(Configuration.membersKey);
+    }
+
 
     private DatabaseReference getChannelReference(String key) {
         return getChannelRoot().child(key);
@@ -68,25 +93,100 @@ public class ChannelDao {
         });
     }
 
-    public void joinChannel(Channel channel) {
-        if (channel.getCreatorId().equals(
-                CurrentUser.getUser().getUid())){
-        }
+//    public void joinChannel(Channel channel) {
+//        if (channel.getCreatorId().equals(
+//                CurrentUser.getUser().getUid())){
+//        }
+//    }
+
+    public void joinChannel(String channelId, final String userId, final String trueName) {
+        getChannelChild(channelId).runTransaction(
+                new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Channel channel = mutableData.getValue(Channel.class);
+                Member member = null;
+                if (channel == null) {
+                    Log.d("joinChannel()", "(Possibly) The channel doesn't exist!");
+                    // sendFailureMessage("The channel doesn't exist!");
+                    return Transaction.success(mutableData);
+                }
+                if (channel.getMembers().containsKey(userId)) {
+                    Log.d("joinChannel()", "You are already in the channel!");
+                    sendSuccessMessage("You are already in the channel!");
+                    return Transaction.success(mutableData);
+                } else if (channel.isAnonymous()) {
+                    if (channel.getThemeList().size() <= channel.getMemberCount()) {
+                        Log.d("joinChannel()", "The channel is already full!");
+                        sendFailureMessage("The channel is already full!");
+                        return Transaction.success(mutableData);
+                    } else {
+                        member = new Member(
+                                channel.getThemeList().get(
+                                        String.format("%03d", channel.getMemberCount() + 1)));
+                    }
+                } else {
+                    member = new Member(trueName);
+                }
+                Log.d("joinChannel()", "You're added into the member list!");
+                sendSuccessMessage("You're added into the member list!");
+                channel.getMembers().put(userId, member);
+                channel.setMemberCount(channel.getMemberCount() + 1);
+                mutableData.setValue(channel);
+                // Send 1st message to the channel.
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                if (!b) {
+                    sendFailureMessage("Error! Cannot join the channel!");
+                }
+                if (!dataSnapshot.hasChildren()) {
+                    Log.d("joinChannel()", "(Confirmed) The channel doesn't exist!");
+                    sendFailureMessage("The channel doesn't exist!");
+                }
+            }
+        });
     }
 
-    public void joinChannel(final String channelId) {
-        getChannelRoot().addListenerForSingleValueEvent(
+    private void sendFailureMessage(String message) {
+        if (onFailureCommand == null) {
+            return;
+        }
+        ((MessageCommand)onFailureCommand).setMessage(message);
+        onFailureCommand.execute();
+    }
+
+    private void sendSuccessMessage(String message) {
+        if (onSuccessCommand == null) {
+            return;
+        }
+        ((MessageCommand)onSuccessCommand).setMessage(message);
+        onSuccessCommand.execute();
+    }
+
+    private void sendObject(Channel channel) {
+        if (objectCommand == null) {
+            return;
+        }
+        objectCommand.setObject(channel);
+        objectCommand.execute();
+    }
+
+    public void readChannel(String channelId) {
+        getChannelChild(channelId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(channelId)) {
-                    if (onSuccessCommand != null) {
-                        onSuccessCommand.execute();
-                    }
-                } else {
-                    if (onFailureCommand != null) {
-                        onFailureCommand.execute();
-                    }
+                if (dataSnapshot.hasChildren()) {
+                    Channel channel = dataSnapshot.getValue(Channel.class);
+                    channel.writeKey(dataSnapshot.getKey());
+                    sendSuccessMessage("Read the channel successfully!");
+                    sendObject(channel);
+                }
+                else {
+                    sendFailureMessage("Cannot read the channel!");
                 }
             }
 
@@ -97,7 +197,67 @@ public class ChannelDao {
         });
     }
 
+//    public void joinChannel(final String channelId) {
+//        getChannelRoot().addListenerForSingleValueEvent(
+//                new CheckExistsListener(channelId, onSuccessCommand, onFailureCommand)
+//        );
+//    }
+//
+//    public void checkInChannel(final String channelId, final String userId) {
+//        getChannelMembersChild(channelId).addListenerForSingleValueEvent(
+//                new CheckExistsListener(userId, onSuccessCommand, onFailureCommand)
+//        );
+//    }
 
+//    public void addMember(String channelId, String userId) {
+//        // Get value for the channel
+//        getChannelChild(channelId).addValueEventListener(
+//                new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
+
+
+}
+
+class CheckExistsListener implements ValueEventListener {
+
+    private Command onSuccessCommand;
+    private Command onFailureCommand;
+    private String childKey;
+
+    public CheckExistsListener(String childKey,
+                               Command onSuccessCommand, Command onFailureCommand) {
+        this.childKey = childKey;
+        this.onSuccessCommand = onSuccessCommand;
+        this.onFailureCommand = onFailureCommand;
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        if (dataSnapshot.hasChild(childKey)) {
+            if (onSuccessCommand != null) {
+                onSuccessCommand.execute();
+            }
+        } else {
+            if (onFailureCommand != null) {
+                onFailureCommand.execute();
+            }
+        }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
+    }
 }
 
 

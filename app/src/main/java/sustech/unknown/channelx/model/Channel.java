@@ -1,5 +1,10 @@
 package sustech.unknown.channelx.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import co.intentservice.chatui.models.ChatMessage;
+
 /**
  * Created by dahao on 2017/12/14.
  */
@@ -13,10 +18,15 @@ public class Channel {
     private boolean anonymous, group;
     private String key;
     private boolean isDestroyed;
+    private int memberCount;
+    private Map<String, Member> members = new HashMap<>();
+    private Map<String, String> themeList = new HashMap<>();
+    private Map<String, ChatMessage> messages = new HashMap<>();
 
     public Channel(){
         this.isDestroyed = false;
     }
+
     public Channel (String name, int imageId,long time){
         this.name=name;
         this.imageId=imageId;
@@ -98,5 +108,37 @@ public class Channel {
 
     public void setDestroyed(boolean destroyed) {
         isDestroyed = destroyed;
+    }
+
+    public int getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
+    }
+
+    public Map<String, Member> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Map<String, Member> members) {
+        this.members = members;
+    }
+
+    public Map<String, String> getThemeList() {
+        return themeList;
+    }
+
+    public void setThemeList(Map<String, String> themeList) {
+        this.themeList = themeList;
+    }
+
+    public Map<String, ChatMessage> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Map<String, ChatMessage> messages) {
+        this.messages = messages;
     }
 }
