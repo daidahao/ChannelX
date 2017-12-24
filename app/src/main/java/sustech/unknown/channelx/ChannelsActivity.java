@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import sustech.unknown.channelx.dao.LoadChannelDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.util.ToastUtil;
 
@@ -184,6 +185,7 @@ public class ChannelsActivity extends AppCompatActivity {
         }
         else {
             Log.d("onStart", mUser.getEmail());
+            testLoadChannels();
             // Log.d("onStart", CurrentUser.getUser().toString());
 
 //           TextView userName = (TextView) findViewById(R.id.username);
@@ -197,6 +199,11 @@ public class ChannelsActivity extends AppCompatActivity {
 //            }
         }
 
+    }
+
+    private void testLoadChannels() {
+        LoadChannelDao loadChannelDao = new LoadChannelDao();
+        loadChannelDao.loadAllChannels();
     }
 
     public void OnCreateChannel(View view) {
