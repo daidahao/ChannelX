@@ -167,9 +167,16 @@ public class ChannelsActivity extends AppCompatActivity {
 //        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
 //        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
 //    }
-    private void initExpireChannels(){
-        expire_channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
+    private void initExpireChannels() {
+        expire_channelList.add(
+                new Channel("Zixiao Liu", R.drawable.profile_liu, 2017 - 12 - 21));
         // channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
+    }
+
+    private void initChannels() {
+
+        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
+        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
