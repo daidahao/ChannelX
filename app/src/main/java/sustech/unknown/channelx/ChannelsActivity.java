@@ -201,7 +201,7 @@ public class ChannelsActivity extends AppCompatActivity {
         Log.d("onStart", "onStart is activated.");
 
         if (mUser == null || mUser.isAnonymous()) {
-            Log.d("onStart", "user is null.");
+            Log.d("onSt art", "user is null.");
             login();
         }
         else {
