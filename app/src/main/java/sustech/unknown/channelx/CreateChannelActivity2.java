@@ -2,6 +2,9 @@ package sustech.unknown.channelx;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,12 +17,23 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import sustech.unknown.channelx.command.CreateChannelOnFailureCommand;
 import sustech.unknown.channelx.command.CreateChannelOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
@@ -45,9 +59,15 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     private Calendar calendar;
     private TextView themeTextView;
     private HashMap<String, Map> allThemesMap;
+    private CircleImageView photoimage;
+    private Uri uri;
+    private Uri downloadUrl;
 
     public static String ANONYMOUS_EXTRA =
             "sustech.unknown.channelx.CreateChannelActivity2.ANONYMOUS_EXTRA";
+    private static final int PHOTO_REQUEST_CAREMA = 1;// 拍照
+    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
+    private static final int PHOTO_REQUEST_CUT = 3;// 结果
 
 
     @Override
@@ -61,6 +81,8 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         initializeDateText();
         initializeNameText();
         initializeExpiredSwitch();
+        initializeImageView();
+
 
     }
 
@@ -81,6 +103,34 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         } else{
             view.setVisibility(View.GONE);
         }
+    }
+
+    private void initializeImageView(){
+        photoimage= findViewById(R.id.channelImageView);
+        photoimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gallery();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                final StorageReference re = storage.getReferenceFromUrl("gs://channelx-544c1.appspot.com/").child("channel/"+user.getUid()+".jpg");
+                if (uri==null){
+                    return;
+                }
+                UploadTask uploadTask = re.putFile(uri);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // ...
+                        downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                });
+            }
+        });
     }
 
     private void initializeNameText() {
@@ -170,6 +220,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         channel.setExpiredTime(calendar.getTimeInMillis());
         channel.setGroup(!groupSwitch.isChecked());
         channel.setDestroyed(false);
+        channel.setDownloadUrl(downloadUrl);
         channel.setMemberCount(0);
         if (anonymous) {
             channel.setTheme(spinner.getSelectedItem().toString());
@@ -246,5 +297,50 @@ public class CreateChannelActivity2 extends AppCompatActivity {
                 "Channel cannot be created! Please check your connection!");
         setResult(RESULT_CANCELED);
         finish();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PHOTO_REQUEST_GALLERY) {
+            // 从相册返回的数据
+            if (data != null) {
+                // 得到图片的全路径
+                uri = data.getData();
+                crop(uri);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    private void crop(Uri uri) {
+        // 裁剪图片意图
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // 裁剪框的比例，1：1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // 裁剪后输出图片的尺寸大小
+        intent.putExtra("outputX", 250);
+        intent.putExtra("outputY", 250);
+
+        intent.putExtra("outputFormat", "JPEG");// 图片格式
+        intent.putExtra("noFaceDetection", true);// 取消人脸识别
+        intent.putExtra("return-data", true);
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
+        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+    }
+
+    /*
+ * 从相册获取
+ */
+    public void gallery() {
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
     }
 }

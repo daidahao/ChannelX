@@ -1,5 +1,7 @@
 package sustech.unknown.channelx.model;
 
+import android.net.Uri;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +19,16 @@ public class Channel {
     private String key;
     private boolean isDestroyed;
     private int memberCount;
+
+    public Uri getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(Uri downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    private Uri downloadUrl;
     private Map<String, Member> members = new HashMap<>();
     private Map<String, String> themeList = new HashMap<>();
 

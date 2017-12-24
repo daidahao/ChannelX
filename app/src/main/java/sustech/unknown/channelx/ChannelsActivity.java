@@ -38,7 +38,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import sustech.unknown.channelx.model.Channel;
+import sustech.unknown.channelx.dao.*;
+import sustech.unknown.channelx.model.DatabaseRoot;
+import sustech.unknown.channelx.model.User;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static sustech.unknown.channelx.R.id.username;
 
 /**
@@ -79,7 +83,6 @@ public class ChannelsActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         ActionBar actionBar = getSupportActionBar();
-
 
 
         if (actionBar != null) {
@@ -144,7 +147,6 @@ public class ChannelsActivity extends AppCompatActivity {
                      }
 
                  });
-
              }
 
          }).start();
@@ -173,7 +175,7 @@ public class ChannelsActivity extends AppCompatActivity {
                 onJoinChannel();
                 break;
             case R.id.timeout:
-                Toast.makeText(this, "You clicked timeout", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "You clicked timeout", LENGTH_SHORT).show();
                 break;
             default:
         }
@@ -202,7 +204,6 @@ public class ChannelsActivity extends AppCompatActivity {
         else {
             Log.d("onStart", mUser.getEmail());
             // Log.d("onStart", CurrentUser.getUser().toString());
-
 //           TextView userName = (TextView) findViewById(R.id.username);
 //            if (mUser.getDisplayName() != null) {
 //                userName.setText(mUser.getDisplayName());
@@ -302,7 +303,12 @@ public class ChannelsActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                 mUser = FirebaseAuth.getInstance().getCurrentUser();
+                User myuser = new User(mUser.getUid(),mUser.getEmail(),mUser.getPhoneNumber());
+//                UserDao.checkUserByid(myuser);
+                  FirebaseDatabase database = FirebaseDatabase.getInstance();
+                  DatabaseReference ref = DatabaseRoot.getRoot().child("user");
+                ref.child(mUser.getUid()).setValue(myuser);
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
             }
