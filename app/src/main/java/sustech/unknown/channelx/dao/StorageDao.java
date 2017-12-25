@@ -3,6 +3,8 @@ package sustech.unknown.channelx.dao;
 
 import android.net.Uri;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -28,9 +30,15 @@ public class StorageDao {
     }
 
 
-    public void uploadUserPhoto(Uri uri, String userid){
+    public void uploadUserPhoto(Uri uri, String userId){
         mStorage = FirebaseStorage.getInstance();
-        storageReference = mStorage.getReference().getRoot().child("user").child(userid+".jpg");
+        storageReference = mStorage.getReference().getRoot().child("user").child(userId+".jpg");
         storageReference.putFile(uri);
+    }
+
+    public StorageReference downloadChannelImageByKey(String channelKey){
+        mStorage = FirebaseStorage.getInstance();
+        storageReference = mStorage.getReferenceFromUrl("gs://channelx-544c1.appspot.com/channel/"+channelKey+".jpg");
+        return storageReference;
     }
 }

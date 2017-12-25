@@ -27,6 +27,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,16 +35,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+
 import de.hdodenhof.circleimageview.CircleImageView;
-import sustech.unknown.channelx.dao.LoadChannelDao;
+
 import sustech.unknown.channelx.dao.StorageDao;
+
+import sustech.unknown.channelx.command.ReadChannelsListObjectCommand;
+import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.ChannelsListDao;
+
 import sustech.unknown.channelx.model.Channel;
-import sustech.unknown.channelx.util.ToastUtil;
+import sustech.unknown.channelx.model.CurrentUser;
 
 /**
  * Created by Administrator on 2017/12/16.
@@ -66,10 +75,10 @@ public class ChannelsActivity extends AppCompatActivity {
     private ChannelsAdapter adapter;
     private ExpireChannelsAdapter expireAdapter;
     private SwipeRefreshLayout swipeRefresh;
-    private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private TextView userLabel;
     private TextView contactLabel;
+    private ChannelsListDao channelsListDao;
     private boolean clock=true;
 
     private DatabaseReference mDatabase, mChannelReference;
@@ -79,6 +88,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
+    private File headImage;
 
 
     @Override
@@ -102,6 +112,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
         userLabel = navView.getHeaderView(0).findViewById(R.id.username);
         contactLabel = navView.getHeaderView(0).findViewById(R.id.mail);
+
 
         navView.setCheckedItem(R.id.channels);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -128,7 +139,13 @@ public class ChannelsActivity extends AppCompatActivity {
             }
         });
 
-        initChannels();
+        // initChannels();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,1);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new ChannelsAdapter(channelList);
+        recyclerView.setAdapter(adapter);
+        // initChannels();
         initExpireChannels();
         showCurrentChannels();
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
@@ -166,14 +183,27 @@ public class ChannelsActivity extends AppCompatActivity {
          }).start();
     }
 
+//    private void initChannels() {
+//        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
+//        channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
+//        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
+//        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
+//    }
+//    private void initChannels() {
+//
+//        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
+//        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
+//    }
+    private void initExpireChannels() {
+        expire_channelList.add(
+                new Channel("Zixiao Liu", R.drawable.profile_liu, 2017 - 12 - 21));
+        // channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
+    }
+
     private void initChannels() {
 
         channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
         channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
-    }
-    private void initExpireChannels(){
-        expire_channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
-        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -236,41 +266,69 @@ public class ChannelsActivity extends AppCompatActivity {
         super.onStart();
 
         // 检验当前是否登陆
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
         Log.d("onStart", "onStart is activated.");
-
-        if (mUser == null || mUser.isAnonymous()) {
-            Log.d("onSt art", "user is null.");
+        if (!CurrentUser.isLogin()) {
+            Log.d("onStart", "user is null.");
             login();
         }
         else {
-            Log.d("onStart", mUser.getEmail());
-            testLoadChannels();
-            userLabel.setText(mUser.getDisplayName());
-            if (mUser.getEmail() == null || mUser.getEmail().trim().isEmpty()) {
-                contactLabel.setText(mUser.getPhoneNumber());
-            } else {
-                contactLabel.setText(mUser.getEmail());
-            }
-            // Log.d("onStart", CurrentUser.getUser().toString());
-
-//           TextView userName = (TextView) findViewById(R.id.username);
-//            if (mUser.getDisplayName() != null) {
-//                userName.setText(mUser.getDisplayName());
-//            }
-//
-//           TextView userEmail = (TextView) findViewById(R.id.mail);
-//            if (mUser.getEmail() != null) {
-//                userEmail.setText(mUser.getEmail());
-//            }
+            FirebaseUser user = CurrentUser.getUser();
+            Log.d("onStart", user.getEmail());
+            setUserLabel(user);
+            initializeChannelsList(user.getUid());
+            initializeHeadImage();
         }
+    }
+
+    private void setUserLabel(FirebaseUser user) {
+        userLabel.setText(user.getDisplayName());
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            contactLabel.setText(user.getPhoneNumber());
+        } else {
+            contactLabel.setText(user.getEmail());
+        }
+    }
+
+    private void initializeChannelsList(String userId) {
+        if (channelsListDao == null) {
+            ReadChannelsListObjectCommand objectCommand =
+                    new ReadChannelsListObjectCommand(this);
+            channelsListDao = new ChannelsListDao(objectCommand, userId);
+            channelsListDao.readAllChannels();
+        }
+    }
+
+    private void initializeHeadImage()   {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        headphoto = findViewById(R.id.icon_image);
+        if (headphoto==null) return;
+        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+user.getUid()+".jpg");
+        try{
+            headImage = File.createTempFile("images", "jpg");
+            ref.getFile(headImage).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    headImage = null;
+                }
+            });
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Glide.with(this /* context */)
+                .using(new FirebaseImageLoader())
+                .load(ref)
+                .into(headphoto);
 
     }
 
-    private void testLoadChannels() {
-        LoadChannelDao loadChannelDao = new LoadChannelDao();
-        loadChannelDao.loadAllChannels();
+    public void addChannel(Channel channel) {
+        if (channelList.contains(channel)) {
+            return;
+        }
+        channelList.add(channel);
+        adapter.notifyDataSetChanged();
     }
 
     public void OnCreateChannel(View view) {
@@ -280,7 +338,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
     // 注销方法
     public void signout() {
-        mAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
         AuthUI authUI = AuthUI.getInstance();
         authUI.delete(this).addOnCompleteListener(
                 new OnCompleteListener<Void>() {
@@ -294,6 +352,7 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
     public void login() {
+        clearChannelsList();
         // 选择登陆验证方式
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
@@ -308,6 +367,11 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, Configuration.RC_SIGN_IN);
     }
 
+    private void clearChannelsList() {
+        channelsListDao = null;
+        channelList.clear();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -315,13 +379,8 @@ public class ChannelsActivity extends AppCompatActivity {
         if (requestCode == Configuration.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                headphoto =findViewById(R.id.icon_image);
-                StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+user.getUid()+".jpg");
-                Glide.with(this /* context */)
-                        .using(new FirebaseImageLoader())
-                        .load(ref)
-                        .into(headphoto);
+                clearChannelsList();
+                // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
             }
@@ -329,7 +388,8 @@ public class ChannelsActivity extends AppCompatActivity {
         }
         if (requestCode == Configuration.CREATE_CHANNEL_1_REQUEST) {
             if (resultCode == RESULT_OK) {
-                // DO SOMETHING
+                String channelKey = data.getStringExtra(Configuration.CHANNEL_KEY_MESSAGE);
+                joinChannel(channelKey);
             }
         }
         if (requestCode == Configuration.JOIN_CHANNEL_REQUEST) {
@@ -354,7 +414,7 @@ public class ChannelsActivity extends AppCompatActivity {
                 headphoto = findViewById(R.id.icon_image);
                 headphoto.setImageURI(uri);
                 StorageDao dao = new StorageDao();
-                dao.uploadUserPhoto(uri, mAuth.getUid());
+                dao.uploadUserPhoto(uri, CurrentUser.getUser().getUid());
 
             }
         }
@@ -392,6 +452,17 @@ public class ChannelsActivity extends AppCompatActivity {
 
 // I am a dashadiao
 
+
+    private void joinChannel(String channelKey) {
+        if (channelKey == null || channelKey.trim().isEmpty()) {
+            return;
+        }
+        ChannelDao channelDao = new ChannelDao();
+        channelDao.joinChannel(channelKey,
+                CurrentUser.getUser().getUid(),
+                CurrentUser.getUser().getDisplayName()
+        );
+    }
 
 
 }

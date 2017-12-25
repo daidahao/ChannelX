@@ -68,6 +68,10 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         initializeDateText();
         initializeNameText();
         initializeExpiredSwitch();
+        initializeImageView();
+    }
+
+    private void initializeImageView(){
         photoimage = findViewById(R.id.channelImageView);
         photoimage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +80,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
             }
         });
     }
-
-
 
     private void initializeExpiredSwitch() {
         expriedSwitch = findViewById(R.id.expiredSwitch);
@@ -88,15 +90,6 @@ public class CreateChannelActivity2 extends AppCompatActivity {
                         setVisible(dateText, isChecked);
                     }
                 });
-    }
-    private void initializeChannelImageView() {
-
-        photoimage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                gallery();
-            }
-        });
     }
 
     private void setVisible(View view, boolean visible) {

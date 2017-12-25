@@ -72,10 +72,12 @@ public class ChannelDao {
 
     public void createChannel(final Channel channel,final Uri uri) {
         DatabaseReference channelChild = getChannelRoot().push();
+        //set channel uri path = default value unknown
         channel.writeKey(channelChild.getKey());
-        StorageDao storageDao = new StorageDao();
-        storageDao.uploadChannelPhoto(uri,channel.readKey());
         addListenersForTask(channelChild.setValue(channel));
+        StorageDao storageDao = new StorageDao();
+        if (uri==null) return;
+        storageDao.uploadChannelPhoto(uri,channel.readKey());
     }
 
     private void addListenersForTask(Task<Void> task) {
