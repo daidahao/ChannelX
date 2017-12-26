@@ -42,7 +42,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import sustech.unknown.channelx.dao.StorageDao;
@@ -50,7 +49,9 @@ import sustech.unknown.channelx.dao.StorageDao;
 import sustech.unknown.channelx.command.ReadChannelsListObjectCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.dao.ChannelsListDao;
-
+import sustech.unknown.channelx.command.ReadChannelsListObjectCommand;
+import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.ChannelsListDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 
@@ -89,7 +90,6 @@ public class ChannelsActivity extends AppCompatActivity {
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
     private File headImage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +156,6 @@ public class ChannelsActivity extends AppCompatActivity {
                 refreshChannels();
             }
         });
-
-
     }
 
 
@@ -270,13 +268,16 @@ public class ChannelsActivity extends AppCompatActivity {
         if (!CurrentUser.isLogin()) {
             Log.d("onStart", "user is null.");
             login();
+            initializeHeadImage();
         }
         else {
             FirebaseUser user = CurrentUser.getUser();
             Log.d("onStart", user.getEmail());
             setUserLabel(user);
             initializeChannelsList(user.getUid());
+
             initializeHeadImage();
+
         }
     }
 
@@ -289,22 +290,15 @@ public class ChannelsActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeChannelsList(String userId) {
-        if (channelsListDao == null) {
-            ReadChannelsListObjectCommand objectCommand =
-                    new ReadChannelsListObjectCommand(this);
-            channelsListDao = new ChannelsListDao(objectCommand, userId);
-            channelsListDao.readAllChannels();
-        }
-    }
 
     private void initializeHeadImage()   {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         headphoto = findViewById(R.id.icon_image);
-        if (headphoto==null) return;
-        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+user.getUid()+".jpg");
-        try{
-            headImage = File.createTempFile("images", "jpg");
+          try{
+              if (headphoto==null) return;
+              StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+user.getUid()+".jpg");
+
+              headImage = File.createTempFile("images", "jpg");
             ref.getFile(headImage).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -312,15 +306,26 @@ public class ChannelsActivity extends AppCompatActivity {
                     headImage = null;
                 }
             });
+              if (headImage == null) return;
+              Glide.with(this /* context */)
+                      .using(new FirebaseImageLoader())
+                      .load(ref)
+                      .into(headphoto);
 
-        }catch (Exception e){
+          }catch (Exception e){
             e.printStackTrace();
         }
-        Glide.with(this /* context */)
-                .using(new FirebaseImageLoader())
-                .load(ref)
-                .into(headphoto);
 
+        }
+
+
+    private void initializeChannelsList(String userId) {
+        if (channelsListDao == null) {
+            ReadChannelsListObjectCommand objectCommand =
+                    new ReadChannelsListObjectCommand(this);
+            channelsListDao = new ChannelsListDao(objectCommand, userId);
+            channelsListDao.readAllChannels();
+        }
     }
 
     public void addChannel(Channel channel) {
@@ -378,6 +383,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
         if (requestCode == Configuration.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
+
             if (resultCode == RESULT_OK) {
                 clearChannelsList();
                 // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -436,22 +442,8 @@ public class ChannelsActivity extends AppCompatActivity {
         intent.putExtra("return-data", true);
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
         startActivityForResult(intent, PHOTO_REQUEST_CUT);
+
     }
-
-    /*
- * 从相册获取
- */
-    public  void  gallery(View view) {
-
-        // 激活系统图库，选择一张图片
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
-        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
-    }
-
-// I am a dashadiao
-
 
     private void joinChannel(String channelKey) {
         if (channelKey == null || channelKey.trim().isEmpty()) {
@@ -464,5 +456,13 @@ public class ChannelsActivity extends AppCompatActivity {
         );
     }
 
+    public  void  gallery(View view) {
+
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+    }
 
 }
