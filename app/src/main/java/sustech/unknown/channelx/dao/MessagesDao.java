@@ -30,6 +30,7 @@ public class MessagesDao {
     private Command onSuccessCommand = new NoCommand();
     private Command onFailureCommand = new NoCommand();
 
+
     public MessagesDao(Channel channel, String userId) {
         this.channel = channel;
         this.userId = userId;
