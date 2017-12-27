@@ -18,11 +18,14 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 public class ChannelsListDao {
 
     private ObjectCommand<Channel> addObjectCommand;
+    private ObjectCommand<Channel> removeObjectCommand;
     private String userId;
 
-    public ChannelsListDao(ObjectCommand<Channel> objectCommand,
+    public ChannelsListDao(ObjectCommand<Channel> addObjectCommand,
+                           ObjectCommand<Channel> removeObjectCommand,
                            String userId) {
-        this.addObjectCommand = objectCommand;
+        this.addObjectCommand = addObjectCommand;
+        this.removeObjectCommand = removeObjectCommand;
         this.userId = userId;
     }
 
@@ -62,13 +65,18 @@ public class ChannelsListDao {
                     channel.writeKey(dataSnapshot.getKey());
                     sendChannel(channel, addObjectCommand);
                 } else {
-                    // REMOVE THE CHANNEL
+                    sendChannel(channel, removeObjectCommand);
                 }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                Channel channel = dataSnapshot.getValue(Channel.class);
+                if (isChannelEmpty(dataSnapshot, channel)) {
+                    return;
+                }
+                channel.writeKey(dataSnapshot.getKey());
+                sendChannel(channel, removeObjectCommand);
             }
 
             @Override

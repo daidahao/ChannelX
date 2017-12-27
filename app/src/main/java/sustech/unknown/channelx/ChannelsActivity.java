@@ -40,6 +40,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import sustech.unknown.channelx.command.ReadChannelsListRemoveObjectCommand;
 import sustech.unknown.channelx.dao.StorageDao;
 
 import sustech.unknown.channelx.command.ReadChannelsListAddObjectCommand;
@@ -270,7 +271,10 @@ public class ChannelsActivity extends AppCompatActivity {
         if (channelsListDao == null) {
             ReadChannelsListAddObjectCommand addObjectCommand =
                     new ReadChannelsListAddObjectCommand(this);
-            channelsListDao = new ChannelsListDao(addObjectCommand, userId);
+            ReadChannelsListRemoveObjectCommand removeObjectCommand =
+                    new ReadChannelsListRemoveObjectCommand(this);
+            channelsListDao =
+                    new ChannelsListDao(addObjectCommand, removeObjectCommand, userId);
             channelsListDao.readAllChannels();
         }
     }
@@ -425,6 +429,9 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
     public void removeChannel(Channel channel) {
-
+        channelList.remove(channel);
+        expiredChannelList.remove(channel);
+        adapter.notifyDataSetChanged();
+        expiredAdapter.notifyDataSetChanged();
     }
 }
