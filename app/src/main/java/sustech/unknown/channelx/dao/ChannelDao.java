@@ -14,6 +14,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import co.intentservice.chatui.models.ChatMessage;
 import sustech.unknown.channelx.Configuration;
 import sustech.unknown.channelx.command.Command;
 import sustech.unknown.channelx.command.MessageCommand;
@@ -104,7 +105,7 @@ public class ChannelDao {
 //        }
 //    }
 
-    public void joinChannel(String channelId, final String userId, final String trueName) {
+    public void joinChannel(final String channelId, final String userId, final String trueName) {
         getChannelChild(channelId).runTransaction(
                 new Transaction.Handler() {
             @Override
@@ -138,7 +139,13 @@ public class ChannelDao {
                 channel.getMembers().put(userId, member);
                 channel.setMemberCount(channel.getMemberCount() + 1);
                 mutableData.setValue(channel);
+
                 // Send 1st message to the channel.
+                if (channel.getCreatorId().equals(userId)) {
+                    addFirstMessage(channelId, member.getNickname(), userId, "created");
+                } else {
+                    addFirstMessage(channelId, member.getNickname(), userId, "joined");
+                }
                 return Transaction.success(mutableData);
             }
 
@@ -146,13 +153,38 @@ public class ChannelDao {
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                 if (!b) {
                     sendFailureMessage("Error! Cannot join the channel!");
+                    return;
                 }
                 if (!dataSnapshot.hasChildren()) {
                     Log.d("joinChannel()", "(Confirmed) The channel doesn't exist!");
                     sendFailureMessage("The channel doesn't exist!");
                 }
+                addFirstMessage();
             }
         });
+    }
+
+    /*
+    The following two methods might not be very stable.
+    Need further examination and testing.
+     */
+    private MessagesDao messagesDao;
+    private ChatMessage chatMessage;
+
+    private void addFirstMessage(String channelId, String nickname, String userId, String keyword) {
+        chatMessage = new ChatMessage();
+        chatMessage.setMessage(nickname + " has " + keyword + " the channel.");
+        chatMessage.setUserid(userId);
+        chatMessage.setTimestamp(System.currentTimeMillis());
+        Channel channel = new Channel();
+        channel.writeKey(channelId);
+        messagesDao = new MessagesDao(channel, userId);
+    }
+
+    private void addFirstMessage() {
+        if (messagesDao != null) {
+            messagesDao.addMessage(chatMessage);
+        }
     }
 
     private void sendFailureMessage(String message) {
