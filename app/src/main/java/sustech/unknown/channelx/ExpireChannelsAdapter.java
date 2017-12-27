@@ -70,6 +70,7 @@ public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAd
         Channel channel = mChannelList.get(position);
         holder.channelName.setText(channel.getName());
         holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
+        holder.expire.setTextColor(mContext.getResources().getColor(R.color.red));
         Glide.with(mContext).load(channel.getImageId()).into(holder.channelImage);
     }
 
