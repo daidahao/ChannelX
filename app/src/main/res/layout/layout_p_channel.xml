@@ -1,59 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="sustech.unknown.channelx.ChannelsActivity">
 
 
-    <TextView
-        android:text="Chuanfu Shen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/p_channel_name"
-        android:textSize="36sp"
-        tools:layout_editor_absoluteY="225dp"
-        tools:layout_editor_absoluteX="49dp" />
-
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        app:srcCompat="@drawable/profile_shen"
-        android:id="@+id/imageView"
-        tools:layout_editor_absoluteY="83dp"
-        tools:layout_editor_absoluteX="132dp" />
-
-    <android.support.v7.widget.Toolbar
+    <android.support.constraint.ConstraintLayout
         android:layout_width="384dp"
-        android:layout_height="60dp"
-        android:background="?attr/colorPrimary"
-        android:theme="?attr/actionBarTheme"
-        android:minHeight="?attr/actionBarSize"
-        android:id="@+id/p_toolbar"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="5dp" />
-
-    <ImageButton
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:srcCompat="@drawable/texture"
-        android:id="@+id/imageButton"
-        android:layout_marginStart="80dp"
+        android:layout_height="220dp"
+        android:id="@+id/constraintLayout1"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginEnd="80dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/p_channel_name" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorPrimary">
 
-    <TextView
-        android:text="Start time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/p_starttime"
-        android:textSize="30sp"
-        android:textColor="@color/dark_gray"
-        android:layout_marginStart="24dp"
+        <ImageView
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            app:srcCompat="@drawable/QR"
+            android:id="@+id/imageView"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="184dp" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_channel_name"
+            android:textSize="30sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/channelImageView"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/channelImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_account_circle_black_48dp"
+            app:civ_border_color="@color/very_dark_gray"
+            app:civ_border_width="2dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="32dp" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="384dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:layout_editor_absoluteY="288dp" />
+        android:id="@+id/constraintLayout2"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout1">
+
+        <TextView
+            android:text="More"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_more"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="144dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:text="Rando"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_yournamecontent"
+            android:textSize="24sp"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="112dp"
+            android:layout_marginBottom="184dp" />
+
+        <TextView
+            android:text="Normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_channelthemecontent"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="104dp"
+            android:layout_marginTop="128dp" />
+
+        <TextView
+            android:text="2018-1-1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_expitetimecontent"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="88dp"
+            android:layout_marginTop="88dp" />
+
+        <TextView
+            android:text="Chuanfu Shen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_channelnamecontent"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="24dp" />
+
+        <TextView
+            android:text="This is notice!"
+            android:layout_width="248dp"
+            android:layout_height="52dp"
+            android:id="@+id/p_noticeContent"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="48dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="104dp" />
+
+        <TextView
+            android:text="Notice"
+            android:layout_height="29dp"
+            android:id="@+id/p_notice"
+            android:textSize="24sp"
+            android:textColor="@color/dark_gray"
+            android:layout_width="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="112dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:id="@+id/p_line2"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="1111111111111111111111111111111111"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="160dp"
+            android:textSize="24sp" />
+
+        <TextView
+            android:text="Your Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_yourname"
+            android:textColor="@color/dark_gray"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginBottom="184dp"
+            android:layout_marginStart="32dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:id="@+id/p_line"
+            android:textColor="@color/dark_gray"
+            android:textSize="24sp"
+            android:text="1111111111111111111111111111111111111"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginBottom="240dp" />
+
+        <TextView
+            android:text="Theme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_theme"
+            android:textSize="24sp"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="128dp"
+            android:layout_marginStart="32dp" />
+
+        <TextView
+            android:text="Channel Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_channel_name1"
+            android:textSize="24sp"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="32dp" />
+
+        <TextView
+            android:text="Expire Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/p_expiretime"
+            android:textSize="24sp"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="80dp"
+            android:layout_marginStart="32dp" />
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.constraint.ConstraintLayout>
