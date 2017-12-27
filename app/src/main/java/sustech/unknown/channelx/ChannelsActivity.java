@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -36,7 +37,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -81,15 +84,12 @@ public class ChannelsActivity extends AppCompatActivity {
     private TextView contactLabel;
     private ChannelsListDao channelsListDao;
     private boolean clock=true;
-
-    private DatabaseReference mDatabase, mChannelReference;
-    private String channelKey;
     private Uri uri;
-    private CircleImageView headphoto;
-
+    private CircleImageView icon;
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
-    private File headImage;
+
+    private NavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +100,9 @@ public class ChannelsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        navView = (NavigationView) findViewById(R.id.nav_view);
         ActionBar actionBar = getSupportActionBar();
+
 
 
 
@@ -112,7 +113,7 @@ public class ChannelsActivity extends AppCompatActivity {
 
         userLabel = navView.getHeaderView(0).findViewById(R.id.username);
         contactLabel = navView.getHeaderView(0).findViewById(R.id.mail);
-
+        icon = navView.getHeaderView(0).findViewById(R.id.icon_image);
 
         navView.setCheckedItem(R.id.channels);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -156,29 +157,37 @@ public class ChannelsActivity extends AppCompatActivity {
                 refreshChannels();
             }
         });
+        if (CurrentUser.isLogin()){
+           // initializeHeadImage();
+            try {
+                downloadIcon();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
     private void refreshChannels() {
-         new Thread(new Runnable(){
-             @Override
-             public void run(){
-                 try{
-                     Thread.sleep(500);
-                 }catch (InterruptedException e){
-                     e.printStackTrace();
-                 }
-                 runOnUiThread(new Runnable(){
-                     @Override
-                     public void run(){
-                         swipeRefresh.setRefreshing(false);
-                     }
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                try{
+                    Thread.sleep(500);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run(){
+                        swipeRefresh.setRefreshing(false);
+                    }
 
-                 });
+                });
 
-             }
+            }
 
-         }).start();
+        }).start();
     }
 
 //    private void initChannels() {
@@ -197,6 +206,7 @@ public class ChannelsActivity extends AppCompatActivity {
                 new Channel("Zixiao Liu", R.drawable.profile_liu, 2017 - 12 - 21));
         // channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
     }
+
 
     private void initChannels() {
 
@@ -246,7 +256,6 @@ public class ChannelsActivity extends AppCompatActivity {
                     //itemfindc.setIcon(R.drawable.timeout);
                     clock=true;
                 }
-
                 break;
             default:
         }
@@ -258,27 +267,61 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, Configuration.JOIN_CHANNEL_REQUEST);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //initializeHeadImage();
+        if (uri == null) ;
+        else{
+            //CircleImageView head = findViewById(R.id.icon_image);
+            icon.setImageURI(uri);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (uri == null) ;
+        else{
+            //CircleImageView head = findViewById(R.id.icon_image);
+            icon.setImageURI(uri);
+        }
+    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-
+        if (uri == null) ;
+        else{
+            //CircleImageView head = findViewById(R.id.icon_image);
+            icon.setImageURI(uri);
+        }
         // 检验当前是否登陆
         Log.d("onStart", "onStart is activated.");
         if (!CurrentUser.isLogin()) {
             Log.d("onStart", "user is null.");
             login();
-            initializeHeadImage();
+            try {
+                downloadIcon();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+          //  initializeHeadImage();
         }
         else {
             FirebaseUser user = CurrentUser.getUser();
             Log.d("onStart", user.getEmail());
             setUserLabel(user);
             initializeChannelsList(user.getUid());
-
-            initializeHeadImage();
-
+            //initializeHeadImage();
+            try {
+                downloadIcon();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     private void setUserLabel(FirebaseUser user) {
@@ -291,33 +334,22 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
 
-    private void initializeHeadImage()   {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        headphoto = findViewById(R.id.icon_image);
-          try{
-              if (headphoto==null) return;
-              StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+user.getUid()+".jpg");
-
-              headImage = File.createTempFile("images", "jpg");
-            ref.getFile(headImage).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    headImage = null;
-                }
-            });
-              if (headImage == null) return;
-              Glide.with(this /* context */)
-                      .using(new FirebaseImageLoader())
-                      .load(ref)
-                      .into(headphoto);
-
-          }catch (Exception e){
-            e.printStackTrace();
+    public void downloadIcon() throws IOException {
+        //icon = findViewById(R.id.icon_image);
+        if(CurrentUser.isLogin()){
+            FirebaseUser user = CurrentUser.getUser();
+            StorageDao storageDao = new StorageDao();
+            StorageReference storageReference = storageDao.downloadUserIcon(user.getUid());
+           // tempIcon = File.createTempFile("userTempIcon","jpg");
+            final long FIVE_MEGABYTE = 5* 1024 * 1024;
+            storageReference.getBytes(FIVE_MEGABYTE);
+            //uri = Uri.fromFile(tempIcon);
+            Glide.with(ChannelsActivity.this /* context */)
+                    .using(new FirebaseImageLoader())
+                    .load(storageReference)
+                    .into(icon);
         }
-
-        }
-
+    }
 
     private void initializeChannelsList(String userId) {
         if (channelsListDao == null) {
@@ -387,6 +419,11 @@ public class ChannelsActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 clearChannelsList();
+                try {
+                    downloadIcon();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             } else {
                 Log.w("SIGNIN", "Sign-in failed.");
@@ -416,12 +453,11 @@ public class ChannelsActivity extends AppCompatActivity {
             // 从相册返回的数据
             if (data != null) {
                 // 得到图片的全路径
-                uri = data.getData();
-                //crop(uri);
-                headphoto = findViewById(R.id.icon_image);
-                headphoto.setImageURI(uri);
+                 uri = data.getData();
+                icon.setImageURI(uri);
                 StorageDao dao = new StorageDao();
                 dao.uploadUserPhoto(uri, CurrentUser.getUser().getUid());
+                //dao.uplo
 
             }
         }
