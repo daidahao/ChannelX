@@ -368,6 +368,7 @@ public class ChannelsActivity extends AppCompatActivity {
         AuthUI.SignInIntentBuilder signInIntentBuilder = authUI.createSignInIntentBuilder();
         signInIntentBuilder.setAvailableProviders(providers);
         signInIntentBuilder.setIsSmartLockEnabled(false);
+        signInIntentBuilder.setLogo(R.mipmap.logo);
         Intent intent = signInIntentBuilder.build();
         startActivityForResult(intent, Configuration.RC_SIGN_IN);
     }
