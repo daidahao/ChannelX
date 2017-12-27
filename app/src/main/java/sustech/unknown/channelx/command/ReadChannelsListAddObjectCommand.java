@@ -7,11 +7,11 @@ import sustech.unknown.channelx.model.Channel;
  * Created by dahao on 2017/12/24.
  */
 
-public class ReadChannelsListObjectCommand extends ObjectCommand<Channel> {
+public class ReadChannelsListAddObjectCommand extends ObjectCommand<Channel> {
 
     private ChannelsActivity activity;
 
-    public ReadChannelsListObjectCommand(ChannelsActivity activity) {
+    public ReadChannelsListAddObjectCommand(ChannelsActivity activity) {
         this.activity = activity;
     }
 

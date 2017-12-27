@@ -9,7 +9,7 @@
         />
     <item
         android:id="@+id/timeout"
-        android:icon="@drawable/timeout"
+        android:icon="@drawable/expired"
         android:title="timeout"
         app:showAsAction="always"/>
 

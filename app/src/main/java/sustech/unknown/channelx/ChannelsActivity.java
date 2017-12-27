@@ -1,12 +1,12 @@
 package sustech.unknown.channelx;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -31,25 +30,19 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import sustech.unknown.channelx.dao.StorageDao;
 
-import sustech.unknown.channelx.command.ReadChannelsListObjectCommand;
-import sustech.unknown.channelx.dao.ChannelDao;
-import sustech.unknown.channelx.dao.ChannelsListDao;
-import sustech.unknown.channelx.command.ReadChannelsListObjectCommand;
+import sustech.unknown.channelx.command.ReadChannelsListAddObjectCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.dao.ChannelsListDao;
 import sustech.unknown.channelx.model.Channel;
@@ -63,33 +56,25 @@ public class ChannelsActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
 
-    private Channel[] Channels={
-           // new Channel("me",R.drawable.profile,1000)
-    };
-    //当前用户的channels
-    private Channel[] expireChannels={
-    };//过期channels
-
     private List<Channel> channelList = new ArrayList<>();
-    private List<Channel> expire_channelList=new ArrayList<>();
+    private List<Channel> expiredChannelList = new ArrayList<>();
 
     private ChannelsAdapter adapter;
-    private ExpireChannelsAdapter expireAdapter;
+    private ExpireChannelsAdapter expiredAdapter;
     private SwipeRefreshLayout swipeRefresh;
-    private FirebaseUser mUser;
     private TextView userLabel;
     private TextView contactLabel;
     private ChannelsListDao channelsListDao;
-    private boolean clock=true;
+    private boolean expiredDisplayed = false;
 
-    private DatabaseReference mDatabase, mChannelReference;
-    private String channelKey;
     private Uri uri;
     private CircleImageView headphoto;
 
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
     private File headImage;
+
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,14 +124,12 @@ public class ChannelsActivity extends AppCompatActivity {
             }
         });
 
-        // initChannels();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(this,1);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ChannelsAdapter(channelList);
+        expiredAdapter = new ExpireChannelsAdapter(expiredChannelList);
         recyclerView.setAdapter(adapter);
-        // initChannels();
-        initExpireChannels();
         showCurrentChannels();
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
@@ -181,46 +164,15 @@ public class ChannelsActivity extends AppCompatActivity {
          }).start();
     }
 
-//    private void initChannels() {
-//        channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
-//        channelList.add(new Channel("Zixiao Liu",R.drawable.profile_liu,2017-12-21));
-//        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
-//        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
-//    }
-//    private void initChannels() {
-//
-//        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
-//        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
-//    }
-    private void initExpireChannels() {
-        expire_channelList.add(
-                new Channel("Zixiao Liu", R.drawable.profile_liu, 2017 - 12 - 21));
-        // channelList.add(new Channel("Zhihao Dai",R.drawable.profile_dai,2017-12-21));
-    }
-
-    private void initChannels() {
-
-        channelList.add(new Channel("Chuanfu Shen",R.drawable.profile_shen,2017-12-21));
-        channelList.add(new Channel("Xiaowen Zhang",R.drawable.profile_zhang,2017-12-21));
-    }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
     }
     public void showExprieChannels(){
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(this,1);
-        recyclerView.setLayoutManager(layoutManager);
-        expireAdapter = new ExpireChannelsAdapter(expire_channelList);
-        recyclerView.setAdapter(expireAdapter);
+        recyclerView.setAdapter(expiredAdapter);
 
     }
     public void showCurrentChannels(){
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(this,1);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new ChannelsAdapter(channelList);
         recyclerView.setAdapter(adapter);
     }
 
@@ -231,22 +183,17 @@ public class ChannelsActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.findc:
-//                Toast.makeText(this, "You clicked findc", Toast.LENGTH_SHORT).show();
                 onJoinChannel();
                 break;
             case R.id.timeout:
-                if(clock){
+                expiredDisplayed = !expiredDisplayed;
+                if(expiredDisplayed){
                     showExprieChannels();
-                    //MenuItem itemfindc=findViewById(R.id.findc);
-                    //itemfindc.setIcon(R.drawable.timeout);
-                    clock=false;
-                }else{
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.not_expired));
+                }else {
                     showCurrentChannels();
-                    //MenuItem itemfindc=findViewById(R.id.findc);
-                    //itemfindc.setIcon(R.drawable.timeout);
-                    clock=true;
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.expired));
                 }
-
                 break;
             default:
         }
@@ -321,14 +268,25 @@ public class ChannelsActivity extends AppCompatActivity {
 
     private void initializeChannelsList(String userId) {
         if (channelsListDao == null) {
-            ReadChannelsListObjectCommand objectCommand =
-                    new ReadChannelsListObjectCommand(this);
-            channelsListDao = new ChannelsListDao(objectCommand, userId);
+            ReadChannelsListAddObjectCommand addObjectCommand =
+                    new ReadChannelsListAddObjectCommand(this);
+            channelsListDao = new ChannelsListDao(addObjectCommand, userId);
             channelsListDao.readAllChannels();
         }
     }
 
     public void addChannel(Channel channel) {
+        if (channel == null) {
+            return;
+        }
+        if (channel.getExpiredTime() < System.currentTimeMillis()) {
+            if (expiredChannelList.contains(channel)) {
+                return;
+            }
+            expiredChannelList.add(channel);
+            expiredAdapter.notifyDataSetChanged();
+            return;
+        }
         if (channelList.contains(channel)) {
             return;
         }
@@ -466,4 +424,7 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
     }
 
+    public void removeChannel(Channel channel) {
+
+    }
 }

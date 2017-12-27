@@ -6,13 +6,9 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import sustech.unknown.channelx.command.ObjectCommand;
 import sustech.unknown.channelx.model.Channel;
-import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
 
 /**
@@ -21,12 +17,12 @@ import sustech.unknown.channelx.model.DatabaseRoot;
 
 public class ChannelsListDao {
 
-    private ObjectCommand<Channel> objectCommand;
+    private ObjectCommand<Channel> addObjectCommand;
     private String userId;
 
     public ChannelsListDao(ObjectCommand<Channel> objectCommand,
                            String userId) {
-        this.objectCommand = objectCommand;
+        this.addObjectCommand = objectCommand;
         this.userId = userId;
     }
 
@@ -52,8 +48,7 @@ public class ChannelsListDao {
                 if (channel.getMembers().containsKey(userId)) {
                     Log.d("loadAllChannels()", dataSnapshot.getKey() + "/" + channel.getName());
                     channel.writeKey(dataSnapshot.getKey());
-                    objectCommand.setObject(channel);
-                    objectCommand.execute();
+                    sendChannel(channel, addObjectCommand);
                 }
             }
 
@@ -65,8 +60,7 @@ public class ChannelsListDao {
                 }
                 if (channel.getMembers().containsKey(userId)) {
                     channel.writeKey(dataSnapshot.getKey());
-                    objectCommand.setObject(channel);
-                    objectCommand.execute();
+                    sendChannel(channel, addObjectCommand);
                 } else {
                     // REMOVE THE CHANNEL
                 }
@@ -87,5 +81,12 @@ public class ChannelsListDao {
 
             }
         });
+    }
+
+    private void sendChannel(Channel channel, ObjectCommand<Channel> objectCommand) {
+        if (objectCommand != null) {
+            objectCommand.setObject(channel);
+            objectCommand.execute();
+        }
     }
 }
