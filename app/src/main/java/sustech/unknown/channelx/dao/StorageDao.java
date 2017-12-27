@@ -25,20 +25,26 @@ public class StorageDao {
 
     public void uploadChannelPhoto(Uri uri, String channelKey){
         mStorage = FirebaseStorage.getInstance();
-        storageReference = mStorage.getReference().getRoot().child("channel/"+channelKey+".jpg");
+        storageReference = mStorage.getReferenceFromUrl("gs://channelx-544c1.appspot.com/channel/"+channelKey+".jpg");
         storageReference.putFile(uri);
     }
 
 
     public void uploadUserPhoto(Uri uri, String userId){
         mStorage = FirebaseStorage.getInstance();
-        storageReference = mStorage.getReference().getRoot().child("user").child(userId+".jpg");
+        storageReference =mStorage.getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+userId+".jpg");
         storageReference.putFile(uri);
     }
 
     public StorageReference downloadChannelImageByKey(String channelKey){
         mStorage = FirebaseStorage.getInstance();
         storageReference = mStorage.getReferenceFromUrl("gs://channelx-544c1.appspot.com/channel/"+channelKey+".jpg");
+        return storageReference;
+    }
+
+    public StorageReference downloadUserIcon(String userId){
+        mStorage = FirebaseStorage.getInstance();
+        storageReference = mStorage.getReferenceFromUrl("gs://channelx-544c1.appspot.com/user/"+userId+".jpg");
         return storageReference;
     }
 }
