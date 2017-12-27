@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="29dp"
             android:layout_height="29dp"
-            app:srcCompat="@drawable/QR"
+            app:srcCompat="@drawable/qr"
             android:id="@+id/imageView"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
