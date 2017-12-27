@@ -45,6 +45,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import sustech.unknown.channelx.command.PhotoUploadFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelsListRemoveObjectCommand;
 import sustech.unknown.channelx.dao.StorageDao;
 
@@ -53,6 +54,7 @@ import sustech.unknown.channelx.dao.ChannelDao;
 import sustech.unknown.channelx.dao.ChannelsListDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
+import sustech.unknown.channelx.util.ToastUtil;
 
 /**
  * Created by Administrator on 2017/12/16.
@@ -112,8 +114,8 @@ public class ChannelsActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch(item.getItemId()){
                     case R.id.signout:
-                         navView.setCheckedItem(R.id.channels);
-                         signout();
+                        navView.setCheckedItem(R.id.channels);
+                        signout();
                         //mDrawerLayout.closeDrawers();
                         break;
                     default:
@@ -147,7 +149,7 @@ public class ChannelsActivity extends AppCompatActivity {
             }
         });
         if (CurrentUser.isLogin()){
-           // initializeHeadImage();
+            // initializeHeadImage();
             try {
                 downloadIcon();
             } catch (IOException e) {
@@ -296,7 +298,13 @@ public class ChannelsActivity extends AppCompatActivity {
             StorageReference storageReference = storageDao.downloadUserIcon(user.getUid());
            // tempIcon = File.createTempFile("userTempIcon","jpg");
             final long FIVE_MEGABYTE = 5* 1024 * 1024;
-            storageReference.getBytes(FIVE_MEGABYTE);
+            storageReference.getBytes(FIVE_MEGABYTE).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    PhotoUploadFailureMessageCommand command = new PhotoUploadFailureMessageCommand(ChannelsActivity.this);
+                    command.execute();
+                }
+            });
             //uri = Uri.fromFile(tempIcon);
             Glide.with(ChannelsActivity.this /* context */)
                     .using(new FirebaseImageLoader())
@@ -378,6 +386,13 @@ public class ChannelsActivity extends AppCompatActivity {
     private void clearChannelsList() {
         channelsListDao = null;
         channelList.clear();
+    }
+
+    public void onFailure() {
+        ToastUtil.makeToast(this,
+                "Photo upload failure");
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
     @Override

@@ -20,6 +20,7 @@ import sustech.unknown.channelx.model.*;
 import sustech.unknown.channelx.util.DateFormater;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -79,6 +80,15 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
         Channel channel = mChannelList.get(position);
         holder.channelName.setText(channel.getName());
         holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
+        StorageDao storageDao = new StorageDao();
+        StorageReference storageReference = storageDao.downloadChannelImageByKey(channel.readKey());
+        Glide.with(mContext)
+                .using(new FirebaseImageLoader())
+                .load(storageReference)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.channelImage);
+        //holder.channelImage.set
         //add image  but bug exist
 //        Glide.with(mContext).load(channel.readKey()).into(holder.channelImage);
     }
