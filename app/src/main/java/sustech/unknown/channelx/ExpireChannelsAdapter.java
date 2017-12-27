@@ -52,16 +52,16 @@ public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAd
         }
         View view = LayoutInflater.from(mContext).inflate(R.layout.channel_item, parent, false);
         final ViewHolder holder = new ViewHolder(view);
-//        holder.cardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                int position = holder.getAdapterPosition();
-//                Channel channel = mChannelList.get(position);
-//                Intent intent = new Intent(mContext, ChatActivity.class);
-//                // intent.putExtra(ChatActivity.CHANNEL_NAME, channel.getName());
-//                mContext.startActivity(intent);
-//            }
-//        });
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                Channel channel = mChannelList.get(position);
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
+                mContext.startActivity(intent);
+            }
+        });
         return holder;
     }
 
