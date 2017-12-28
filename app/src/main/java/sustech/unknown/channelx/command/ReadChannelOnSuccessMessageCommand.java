@@ -8,9 +8,10 @@ import sustech.unknown.channelx.ChatActivity;
 
 public class ReadChannelOnSuccessMessageCommand extends MessageCommand {
 
-    private ChatActivity activity;
+    // private ChatActivity activity;
+    private ReadChannelInterface activity;
 
-    public ReadChannelOnSuccessMessageCommand(ChatActivity activity) {
+    public ReadChannelOnSuccessMessageCommand(ReadChannelInterface activity) {
         this.activity = activity;
     }
 

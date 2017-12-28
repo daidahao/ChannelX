@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 
@@ -13,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import co.intentservice.chatui.ChatView;
 import co.intentservice.chatui.models.ChatMessage;
 import sustech.unknown.channelx.command.ChatMessageObjectCommand;
+import sustech.unknown.channelx.command.ReadChannelInterface;
 import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
@@ -25,7 +28,7 @@ import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
 import sustech.unknown.channelx.util.ToastUtil;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements ReadChannelInterface {
 
     private ChatView chatView;
     private Channel channel;
@@ -36,6 +39,13 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        // initializeChatView();
+        // readChannelFromIntent(getIntent());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initializeChatView();
         readChannelFromIntent(getIntent());
     }
@@ -44,6 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         chatView = findViewById(R.id.chat_view);
         chatView.disableInput();
         chatView.setTypingListener(new TypingListenerImpl());
+        chatView.clearMessages();
     }
 
     private void readChannelFromIntent(Intent intent) {
@@ -119,9 +130,46 @@ public class ChatActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         if (title != null) {
             toolbarTitle.setText(title);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                // ToastUtil.makeToast(this, "You clicked settings");
+                startChannelSettingsActivity();
+                break;
+        }
+        return true;
+    }
+
+    private void startChannelSettingsActivity() {
+        if (channel == null) {
+            return;
+        }
+        Intent intent = new Intent(this, ChannelSettingsActivity.class);
+        intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
+        // startActivity(intent);
+        startActivityForResult(intent, Configuration.CHANNEL_SETTINGS_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Configuration.CHANNEL_SETTINGS_REQUEST) {
+            if (resultCode == RESULT_CANCELED) {
+                finish();
+            }
         }
     }
 

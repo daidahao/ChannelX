@@ -5,4 +5,5 @@
     <color name="colorAccent">#ff4081</color>
     <color name="colorwhite">#ffffff</color>
     <color name="red">#ff0000</color>
+    <color name="channel_settings_panel">#d1d3e2</color>
 </resources>

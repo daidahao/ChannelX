@@ -37,11 +37,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CreateChannelActivity1" />
         </activity>
-        <activity android:name=".JoinChannelActivity"
+        <activity
+            android:name=".JoinChannelActivity"
             android:parentActivityName=".ChannelsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ChannelsActivity" />
+        </activity>
+        <activity android:name=".ChannelSettingsActivity"
+            android:parentActivityName=".ChatActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChatActivity" />
         </activity>
     </application>
 

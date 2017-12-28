@@ -36,7 +36,7 @@ public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAd
             super(view);
             cardView = (CardView) view;
             channelImage = (ImageView) view.findViewById(R.id.channel_image);
-            channelName = (TextView) view.findViewById(R.id.channel_name);
+            channelName = (TextView) view.findViewById(R.id.channel_name_label);
             expire=(TextView) view.findViewById(R.id.expire);
         }
     }

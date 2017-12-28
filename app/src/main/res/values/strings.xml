@@ -17,4 +17,12 @@
     <string name="create_channel_button">Create</string>
     <string name="create_channel_group">Group</string>
     <string name="create_channel_one2one">One To One</string>
+    <string name="channel_settings_title">Channel Settings</string>
+    <string name="leave_channel_text">Leave the Channel</string>
+    <string name="nickname">Nickname</string>
+    <string name="theme">Theme</string>
+    <string name="members">Members</string>
+    <string name="more">More</string>
+    <string name="default_theme">----</string>
+    <string name="destroy_channel_text">Destroy the Channel</string>
 </resources>

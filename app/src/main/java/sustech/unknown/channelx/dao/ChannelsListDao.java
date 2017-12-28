@@ -61,8 +61,9 @@ public class ChannelsListDao {
                 if (isChannelEmpty(dataSnapshot, channel)) {
                     return;
                 }
+                channel.writeKey(dataSnapshot.getKey());
                 if (channel.getMembers().containsKey(userId)) {
-                    channel.writeKey(dataSnapshot.getKey());
+                    // channel.writeKey(dataSnapshot.getKey());
                     sendChannel(channel, addObjectCommand);
                 } else {
                     sendChannel(channel, removeObjectCommand);

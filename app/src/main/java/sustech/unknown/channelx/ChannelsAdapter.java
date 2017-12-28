@@ -5,8 +5,6 @@ package sustech.unknown.channelx;
  */
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,9 +20,6 @@ import sustech.unknown.channelx.util.DateFormater;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
@@ -46,7 +41,7 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
             super(view);
             cardView = (CardView) view;
             channelImage = (ImageView) view.findViewById(R.id.channel_image);
-            channelName = (TextView) view.findViewById(R.id.channel_name);
+            channelName = (TextView) view.findViewById(R.id.channel_name_label);
             expire=(TextView) view.findViewById(R.id.expire);
         }
     }

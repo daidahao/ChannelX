@@ -13,12 +13,14 @@ public final class Configuration {
 
     static final int CREATE_CHANNEL_2_REQUEST = 666;
     static final int ENTER_CHANNEL_REQUEST = 111;
-    static final int CREATE_CHANNEL_1_REQUEST = 666;
+    static final int CREATE_CHANNEL_1_REQUEST = 888;
     static final int JOIN_CHANNEL_REQUEST = 999;
     static final int RC_SIGN_IN = 123;
+    static final int CHANNEL_SETTINGS_REQUEST = 777;
 
     static final String CHANNEL_KEY_MESSAGE =
             "sustech.unknown.channelx.CHANNEL_KEY";
+
     static String ANONYMOUS_EXTRA =
             "sustech.unknown.channelx.ANONYMOUS_EXTRA";
 }

@@ -9,9 +9,10 @@ import sustech.unknown.channelx.model.Channel;
 
 public class ReadChannelObjectCommand extends ObjectCommand<Channel> {
 
-    private ChatActivity activity;
+    // private ChatActivity activity;
+    private ReadChannelInterface activity;
 
-    public ReadChannelObjectCommand(ChatActivity activity) {
+    public ReadChannelObjectCommand(ReadChannelInterface activity) {
         this.activity = activity;
     }
 

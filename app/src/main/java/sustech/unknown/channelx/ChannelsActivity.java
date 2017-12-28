@@ -488,9 +488,18 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
     public void removeChannel(Channel channel) {
-        channelList.remove(channel);
-        expiredChannelList.remove(channel);
+//        channelList.remove(channelList.indexOf(channel));
+//        expiredChannelList.remove(expiredChannelList.indexOf(channel));
+        removeFromList(channel, channelList);
+        removeFromList(channel, expiredChannelList);
         adapter.notifyDataSetChanged();
         expiredAdapter.notifyDataSetChanged();
+    }
+
+    private void removeFromList(Channel channel, List<Channel> list) {
+        int index = list.indexOf(channel);
+        if (index != -1) {
+            list.remove(index);
+        }
     }
 }

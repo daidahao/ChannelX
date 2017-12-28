@@ -9,8 +9,8 @@
     <color name="dark_gray">#b3b3b3</color>
     <color name="very_dark_gray">#636363</color>
     <color name="u_blue_light">#4A90E2</color>
-    <color name="u_blue">#4A90E2</color>
-    <color name="u_blue_darker">#ff31649a</color>
+    <color name="u_blue">#4a90e2</color>
+    <color name="u_blue_darker">#31649a</color>
     <color name="twinder_purple_2">#D01FA4</color>
     <color name="bold_username">#4D4D4D</color>
     <color name="faint_real_name">#999999</color>

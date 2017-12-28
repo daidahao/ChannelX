@@ -234,33 +234,22 @@ public class ChannelDao {
         });
     }
 
-//    public void joinChannel(final String channelId) {
-//        getChannelRoot().addListenerForSingleValueEvent(
-//                new CheckExistsListener(channelId, onSuccessCommand, onFailureCommand)
-//        );
-//    }
-//
-//    public void checkInChannel(final String channelId, final String userId) {
-//        getChannelMembersChild(channelId).addListenerForSingleValueEvent(
-//                new CheckExistsListener(userId, onSuccessCommand, onFailureCommand)
-//        );
-//    }
+    public void leaveChannel(String channelId, String userId) {
+        getChannelChild(channelId).child(Configuration.membersKey).child(userId)
+                .runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        mutableData.setValue(null);
+                        return Transaction.success(mutableData);
+                    }
 
-//    public void addMember(String channelId, String userId) {
-//        // Get value for the channel
-//        getChannelChild(channelId).addValueEventListener(
-//                new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                        sendSuccessMessage("You has left the channel");
+                    }
+                });
+    }
+
 
 
 }
