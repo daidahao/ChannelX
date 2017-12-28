@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -298,13 +299,8 @@ public class ChannelsActivity extends AppCompatActivity {
             StorageReference storageReference = storageDao.downloadUserIcon(user.getUid());
            // tempIcon = File.createTempFile("userTempIcon","jpg");
             final long FIVE_MEGABYTE = 5* 1024 * 1024;
-            storageReference.getBytes(FIVE_MEGABYTE).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    PhotoUploadFailureMessageCommand command = new PhotoUploadFailureMessageCommand(ChannelsActivity.this);
-                    command.execute();
-                }
-            });
+            storageReference.getBytes(FIVE_MEGABYTE);
+            //storageReference.nu
             //uri = Uri.fromFile(tempIcon);
             Glide.with(ChannelsActivity.this /* context */)
                     .using(new FirebaseImageLoader())
