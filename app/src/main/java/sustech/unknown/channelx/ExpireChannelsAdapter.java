@@ -69,7 +69,11 @@ public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAd
     public void onBindViewHolder(ViewHolder holder, int position) {
         Channel channel = mChannelList.get(position);
         holder.channelName.setText(channel.getName());
-        holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
+        if (channel.isDestroyed()) {
+            holder.expire.setText(mContext.getApplicationContext().getString(R.string.destroyed));
+        } else {
+            holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
+        }
         holder.expire.setTextColor(mContext.getResources().getColor(R.color.red));
         Glide.with(mContext).load(channel.getImageId()).into(holder.channelImage);
     }

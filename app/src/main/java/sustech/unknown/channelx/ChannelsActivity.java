@@ -327,7 +327,7 @@ public class ChannelsActivity extends AppCompatActivity {
         if (channel == null) {
             return;
         }
-        if (channel.getExpiredTime() < System.currentTimeMillis()) {
+        if (channel.getExpiredTime() < System.currentTimeMillis() || channel.isDestroyed()) {
             if (expiredChannelList.contains(channel)) {
                 return;
             }

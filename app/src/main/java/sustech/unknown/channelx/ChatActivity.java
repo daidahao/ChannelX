@@ -120,6 +120,8 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
     private void initializeInput() {
         if (channel.getExpiredTime() < System.currentTimeMillis()) {
             ToastUtil.makeToast(this, "The channel has expired!");
+        } else if (channel.isDestroyed()){
+            ToastUtil.makeToast(this, "The channel has been destroyed!");
         } else {
             chatView.enableInput();
         }
@@ -167,7 +169,7 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Configuration.CHANNEL_SETTINGS_REQUEST) {
-            if (resultCode == RESULT_CANCELED) {
+            if (resultCode == Configuration.RESULT_DESTROYED) {
                 finish();
             }
         }

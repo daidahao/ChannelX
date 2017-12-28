@@ -64,7 +64,12 @@ public class ChannelsListDao {
                 channel.writeKey(dataSnapshot.getKey());
                 if (channel.getMembers().containsKey(userId)) {
                     // channel.writeKey(dataSnapshot.getKey());
-                    sendChannel(channel, addObjectCommand);
+                    if (channel.isDestroyed()) {
+                        sendChannel(channel, removeObjectCommand);
+                        sendChannel(channel, addObjectCommand);
+                    } else {
+                        sendChannel(channel, addObjectCommand);
+                    }
                 } else {
                     sendChannel(channel, removeObjectCommand);
                 }

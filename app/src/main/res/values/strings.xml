@@ -25,4 +25,8 @@
     <string name="more">More</string>
     <string name="default_theme">----</string>
     <string name="destroy_channel_text">Destroy the Channel</string>
+    <string name="default_creator">Creator</string>
+    <string name="creator">Creator</string>
+    <string name="me">Me</string>
+    <string name="destroyed">DESTROYED</string>
 </resources>

@@ -50,18 +50,19 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:textColor="@android:color/black"
             android:textSize="24sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelImageView"
-            tools:text="Channel Name" />
+            tools:text="Channel Name"
+            app:layout_constraintHorizontal_bias="0.502" />
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -100,19 +101,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="48dp"
-                android:layout_marginTop="40dp"
                 android:text="@string/anonymous"
                 android:textColor="@color/very_dark_gray"
                 android:textSize="18sp"
                 app:layout_constraintLeft_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView6" />
+                app:layout_constraintTop_toTopOf="@+id/textView4"
+                android:layout_marginTop="32dp" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="48dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/creator"
+                android:textColor="@color/very_dark_gray"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="48dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/theme"
                 android:textColor="@color/very_dark_gray"
                 android:textSize="18sp"
@@ -194,12 +207,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/default_theme"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/anonymous_switch" />
+
+            <TextView
+                android:id="@+id/creator_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/default_creator"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/expired_date_text" />
 
             <TextView
                 android:id="@+id/nickname_text"
@@ -230,9 +255,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30sp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="40dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/expired_date_text" />
+                app:layout_constraintTop_toTopOf="@+id/creator_text"
+                android:layout_marginTop="32dp" />
 
             <TextView
                 android:id="@+id/expired_date_text"

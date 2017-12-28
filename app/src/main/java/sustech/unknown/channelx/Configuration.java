@@ -17,6 +17,7 @@ public final class Configuration {
     static final int JOIN_CHANNEL_REQUEST = 999;
     static final int RC_SIGN_IN = 123;
     static final int CHANNEL_SETTINGS_REQUEST = 777;
+    static final int RESULT_DESTROYED = 700;
 
     static final String CHANNEL_KEY_MESSAGE =
             "sustech.unknown.channelx.CHANNEL_KEY";

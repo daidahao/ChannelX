@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import org.w3c.dom.Text;
+
 import sustech.unknown.channelx.command.LeaveChannelOnSuccessCommand;
 import sustech.unknown.channelx.command.ReadChannelInterface;
 import sustech.unknown.channelx.command.ReadChannelObjectCommand;
@@ -35,6 +37,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     private TextView nicknameLabel;
     private TextView moreLabel;
     private Button leaveButton;
+    private TextView creatorLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         initializeToolbar();
         initializeChannelName();
         initializeExpiredDate();
+        initializeCreator();
         initializeAnonymousSwitch();
         initializeTheme();
         initializeNickname();
@@ -51,17 +55,25 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         initializeButton();
     }
 
+    private void initializeCreator() {
+        creatorLabel = findViewById(R.id.creator_text);
+    }
+
     public void onLeaveButton(View view) {
         // ToastUtil.makeToast(this, "You clicked the button!");
         LeaveChannelOnSuccessCommand onSuccessCommand =
                 new LeaveChannelOnSuccessCommand(this);
         ChannelDao channelDao = new ChannelDao(onSuccessCommand, null);
-        channelDao.leaveChannel(channel.readKey(), CurrentUser.getUser().getUid());
+        if (channel.getCreatorId().equals(CurrentUser.getUser().getUid())) {
+            channelDao.destoryChannel(channel.readKey(), CurrentUser.getUser().getUid());
+        } else {
+            channelDao.leaveChannel(channel.readKey(), CurrentUser.getUser().getUid());
+        }
     }
 
     public void onLeaveChannelSuccess(String message) {
         ToastUtil.makeToast(this, message);
-        setResult(RESULT_CANCELED);
+        setResult(Configuration.RESULT_DESTROYED);
         finish();
     }
 
@@ -162,14 +174,15 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
                 startMoreMembersActivity();
             }
         });
+        creatorLabel.setText(channel.getMembers().get(channel.getCreatorId()).getNickname());
         if (currentUser.getUid().equals(channel.getCreatorId())) {
             leaveButton.setText(getApplicationContext().getString(R.string.destroy_channel_text));
+            creatorLabel.setText(getApplicationContext().getString(R.string.me));
         }
-        leaveButton.setEnabled(true);
+        leaveButton.setEnabled(!channel.isDestroyed());
     }
 
     private void startMoreMembersActivity() {
         ToastUtil.makeToast(this, "You clicked more!");
-
     }
 }

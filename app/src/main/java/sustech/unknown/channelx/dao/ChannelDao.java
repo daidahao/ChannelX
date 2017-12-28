@@ -117,6 +117,10 @@ public class ChannelDao {
                     // sendFailureMessage("The channel doesn't exist!");
                     return Transaction.success(mutableData);
                 }
+                if (channel.isDestroyed()) {
+                    sendFailureMessage("The channel has already been destroyed!");
+                    return Transaction.success(mutableData);
+                }
                 if (channel.getMembers().containsKey(userId)) {
                     Log.d("joinChannel()", "You are already in the channel!");
                     sendSuccessMessage("You are already in the channel!");
@@ -234,20 +238,53 @@ public class ChannelDao {
         });
     }
 
-    public void leaveChannel(String channelId, String userId) {
+    public void leaveChannel(final String channelId, final String userId) {
         getChannelChild(channelId).child(Configuration.membersKey).child(userId)
                 .runTransaction(new Transaction.Handler() {
                     @Override
                     public Transaction.Result doTransaction(MutableData mutableData) {
+                        Member member = mutableData.getValue(Member.class);
+                        if (member != null) {
+                            addFirstMessage(channelId, member.getNickname(), userId, "left");
+                        }
                         mutableData.setValue(null);
                         return Transaction.success(mutableData);
                     }
 
                     @Override
                     public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                        addFirstMessage();
                         sendSuccessMessage("You has left the channel");
                     }
                 });
+    }
+
+    // May need to consider multiple circumstances
+    public void destoryChannel(final String channelId, final String userId) {
+        getChannelChild(channelId).runTransaction(
+                new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Channel channel = mutableData.getValue(Channel.class);
+                if (channel == null) {
+                    return Transaction.success(mutableData);
+                }
+                if (channel.getCreatorId().equals(userId)) {
+                    channel.setDestroyed(true);
+                    // channel.setExpiredTime(0);
+                    mutableData.setValue(channel);
+                    Member member = channel.getMembers().get(userId);
+                    addFirstMessage(channelId, member.getNickname(), userId, "destroyed");
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                addFirstMessage();
+                sendSuccessMessage("The channel has been destroyed!");
+            }
+        });
     }
 
 
