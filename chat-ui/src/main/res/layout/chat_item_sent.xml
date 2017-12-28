@@ -6,46 +6,48 @@
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="72dp"
-    android:paddingLeft="72dp"
+    android:paddingLeft="60dp"
     android:paddingEnd="0dp"
     android:paddingRight="16dp"
     android:background="@color/off_white">
 
     <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="horizontal"
+        android:layout_gravity="end"
         android:gravity="end"
-        android:layout_gravity="end">
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <android.support.v7.widget.CardView
             android:id="@+id/bubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            app:cardBackgroundColor="@color/default_bubble_color_send"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/default_bubble_color_send"
-            app:cardUseCompatPadding="true"
-            android:layout_gravity="start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
-                android:padding="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="end"
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:padding="8dp">
 
                 <TextView
                     android:id="@+id/message_text_view"
-                    tools:text="My name is Timi and I am not a god. Inner places is not the atomic career of the doer."
-                    android:textSize="@dimen/default_message_text_size"
-                    android:textColor="@color/default_message_color_send"
-                    android:gravity="center_vertical|start"
-                    android:maxWidth="200dp"
+                    android:maxWidth="195dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:textColor="@color/default_message_color_send"
+                    android:textSize="@dimen/default_message_text_size"
+                    tools:text="My name is Timi and I am not a god. Inner places is not the atomic career of the doer." />
+
+
 
                 <android.support.v4.widget.Space
                     android:layout_width="match_parent"
@@ -53,12 +55,12 @@
 
                 <TextView
                     android:id="@+id/timestamp_text_view"
-                    tools:text="12:10 am"
-                    android:textSize="@dimen/default_timestamp_text_size"
-                    android:textColor="@color/default_tstamp_color_send"
-                    android:gravity="center_vertical|start"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:textColor="@color/default_tstamp_color_send"
+                    android:textSize="@dimen/default_timestamp_text_size"
+                    tools:text="12:10 am" />
 
             </LinearLayout>
 
@@ -67,21 +69,20 @@
         <LinearLayout
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/profile_image"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_account_circle_black_48dp"
                 android:layout_gravity="start"
+                android:src="@drawable/ic_account_circle_black_48dp"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp" />
 
             <include
-                layout="@layout/username_textview"
-                android:id="@+id/username_text_view" />
+                android:id="@+id/username_text_view"
+                layout="@layout/username_textview" />
 
         </LinearLayout>
 

@@ -7,8 +7,7 @@
     android:layout_height="wrap_content"
     android:paddingStart="0dp"
     android:paddingLeft="16dp"
-    android:paddingEnd="72dp"
-    android:paddingRight="72dp"
+    android:paddingRight="60dp"
     android:background="@color/off_white">
 
     <LinearLayout
@@ -68,6 +67,7 @@
                     android:gravity="center_vertical|start"
                     android:textColor="@color/default_message_color_rcv"
                     android:textSize="@dimen/default_message_text_size"
+                    android:maxWidth="195dp"
                     tools:text="My name is Timi and I am..." />
 
                 <android.support.v4.widget.Space
