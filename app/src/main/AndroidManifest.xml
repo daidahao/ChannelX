@@ -59,6 +59,8 @@
                 android:value=".ChatActivity" />
         </activity>
         <activity android:name="io.github.xudaojie.qrcodelib.CaptureActivity" />
+
+        <activity android:name=".QRActivity" />
     </application>
 
 </manifest>

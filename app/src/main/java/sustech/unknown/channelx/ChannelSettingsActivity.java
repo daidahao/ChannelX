@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import sustech.unknown.channelx.util.ToastUtil;
 
 public class ChannelSettingsActivity extends AppCompatActivity implements ReadChannelInterface{
 
+    private static final int QR_REQUEST = 0;
     private Toolbar toolbar;
     // private TextView toolbarTitle;
     private Channel channel;
@@ -38,6 +40,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     private TextView moreLabel;
     private Button leaveButton;
     private TextView creatorLabel;
+    private ImageView qrImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         initializeNickname();
         initializeMore();
         initializeButton();
+        initializeQRImage();
     }
 
     private void initializeCreator() {
@@ -80,6 +84,27 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     private void initializeButton() {
         leaveButton = findViewById(R.id.leave_button);
         leaveButton.setEnabled(false);
+    }
+    private void initializeQRImage() {
+        qrImage = findViewById(R.id.QR_image);
+        qrImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(ChannelSettingsActivity.this, QRActivity.class);
+//                intent.putExtra("channelID",)
+//                startActivityForResult(intent, QR_REQUEST);
+                startQRActivity();
+            }
+        });
+    }
+
+    private void startQRActivity() {
+        if (channel == null) {
+            return;
+        }
+        Intent intent = new Intent(this, QRActivity.class);
+        intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
+        startActivity(intent);
     }
 
     @Override
