@@ -122,6 +122,10 @@ public class ChannelDao {
                     sendFailureMessage("The channel has already been destroyed!");
                     return Transaction.success(mutableData);
                 }
+                if (channel.getExpiredTime() < System.currentTimeMillis()) {
+                    sendFailureMessage("The channel has expired!");
+                    return Transaction.success(mutableData);
+                }
                 if (channel.getMembers().containsKey(userId)) {
                     Log.d("joinChannel()", "You are already in the channel!");
                     sendSuccessMessage("You are already in the channel!");
