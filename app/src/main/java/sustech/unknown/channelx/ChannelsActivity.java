@@ -467,10 +467,21 @@ public class ChannelsActivity extends AppCompatActivity {
         if (channelKey == null || channelKey.trim().isEmpty()) {
             return;
         }
+        Log.d("joinChannel_channels", "email=" + CurrentUser.getUser().getEmail() + " phone=" + CurrentUser.getUser().getPhoneNumber());
+        String contactInfo = null;
+        if (CurrentUser.getUser().getEmail() != null &&
+                !CurrentUser.getUser().getEmail().trim().isEmpty()) {
+            contactInfo = CurrentUser.getUser().getEmail();
+        }
+        else {
+            contactInfo = CurrentUser.getUser().getPhoneNumber();
+        }
+        Log.d("joinChannel", contactInfo);
         ChannelDao channelDao = new ChannelDao();
         channelDao.joinChannel(channelKey,
                 CurrentUser.getUser().getUid(),
-                CurrentUser.getUser().getDisplayName()
+                CurrentUser.getUser().getDisplayName(),
+                contactInfo
         );
     }
 

@@ -56,9 +56,17 @@ public class JoinChannelActivity extends AppCompatActivity {
         if (!channelId.trim().isEmpty()){
             this.channelId = channelId.trim();
             // channelDao.joinChannel(this.channelId);
+            String contactInfo = null;
+            if (CurrentUser.getUser().getEmail() != null) {
+                contactInfo = CurrentUser.getUser().getEmail();
+            }
+            if (CurrentUser.getUser().getPhoneNumber() != null) {
+                contactInfo = CurrentUser.getUser().getPhoneNumber();
+            }
             channelDao.joinChannel(this.channelId,
                     CurrentUser.getUser().getUid(),
-                    CurrentUser.getUser().getDisplayName());
+                    CurrentUser.getUser().getDisplayName(),
+                    contactInfo);
         } else {
             ToastUtil.makeToast(this, "Channel ID shouldn't be empty");
         }
