@@ -1,22 +1,18 @@
 package sustech.unknown.channelx;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.List;
 
-import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.Member;
-import sustech.unknown.channelx.util.DateFormater;
 
 /**
  * Created by Administrator on 2017/12/30.
@@ -30,20 +26,20 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
         CardView cardView;
         ImageView memberImage;
         TextView memberName;
-        TextView memebrInfo;
+        TextView memberInfo;
 
         public ViewHolder(View view) {
             super(view);
             cardView = (CardView) view;
             memberImage = (ImageView) view.findViewById(R.id.member_image);
             memberName = (TextView) view.findViewById(R.id.member_name);
-            memebrInfo = (TextView) view.findViewById(R.id.member_info);
+            memberInfo = (TextView) view.findViewById(R.id.member_info);
         }
 
 
     }
-    public MembersAdapter(List<Member> channelList) {
-        mMemberList = mMemberList;
+    public MembersAdapter(List<Member> memberList) {
+        this.mMemberList = memberList;
     }
 
 
@@ -69,17 +65,22 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(MembersAdapter.ViewHolder holder, int position) {
-        Member memebr = mMemberList.get(position);
-        holder.memberName.setText(memebr.getNickname());
-        holder.memberName.setText(memebr.getInfo());
+        Member member = mMemberList.get(position);
+        holder.memberName.setText(member.getNickname());
+        Log.d("onBindViewHolder", member.getNickname());
+        if (member.getInfo() == null || member.getInfo().trim().isEmpty()) {
+            holder.memberInfo.setText("");
+        }
+        else {
+            holder.memberInfo.setText(member.getInfo());
+        }
         // 加载member 头像
+
     }
 
     @Override
     public int getItemCount() {
         return mMemberList.size();
     }
-
-
 
 }

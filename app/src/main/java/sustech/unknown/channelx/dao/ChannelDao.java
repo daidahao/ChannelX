@@ -105,7 +105,8 @@ public class ChannelDao {
 //        }
 //    }
 
-    public void joinChannel(final String channelId, final String userId, final String trueName) {
+    public void joinChannel(final String channelId, final String userId,
+                            final String trueName, final String contactInfo) {
         getChannelChild(channelId).runTransaction(
                 new Transaction.Handler() {
             @Override
@@ -119,6 +120,10 @@ public class ChannelDao {
                 }
                 if (channel.isDestroyed()) {
                     sendFailureMessage("The channel has already been destroyed!");
+                    return Transaction.success(mutableData);
+                }
+                if (channel.getExpiredTime() < System.currentTimeMillis()) {
+                    sendFailureMessage("The channel has expired!");
                     return Transaction.success(mutableData);
                 }
                 if (channel.getMembers().containsKey(userId)) {
@@ -137,8 +142,10 @@ public class ChannelDao {
                     }
                 } else {
                     member = new Member(trueName);
+                    member.setInfo(contactInfo);
                 }
                 Log.d("joinChannel()", "You're added into the member list!");
+                Log.d("joinChannel()", contactInfo);
                 sendSuccessMessage("You're added into the member list!");
                 channel.getMembers().put(userId, member);
                 channel.setMemberCount(channel.getMemberCount() + 1);

@@ -49,7 +49,12 @@ public class Member {
     public void setJoinTime(long joinTime) {
         this.joinTime = joinTime;
     }
+
     public String getInfo(){
         return this.info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 }
