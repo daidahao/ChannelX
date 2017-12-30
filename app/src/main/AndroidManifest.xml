@@ -50,6 +50,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ChatActivity" />
         </activity>
+        <activity android:name=".MembersActivity"
+            android:parentActivityName=".ChannelSettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChannelSettingsActivity" />
+        </activity>
     </application>
 
 </manifest>

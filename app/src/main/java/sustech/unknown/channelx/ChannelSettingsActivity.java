@@ -25,7 +25,7 @@ import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.util.DateFormater;
 import sustech.unknown.channelx.util.ToastUtil;
 
-public class ChannelSettingsActivity extends AppCompatActivity implements ReadChannelInterface{
+public class ChannelSettingsActivity extends AppCompatActivity implements ReadChannelInterface {
 
     private Toolbar toolbar;
     // private TextView toolbarTitle;
@@ -183,6 +183,11 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     }
 
     private void startMoreMembersActivity() {
-        ToastUtil.makeToast(this, "You clicked more!");
+        if (channel == null) {
+            return;
+        }
+        Intent intent = new Intent(this, MembersActivity.class);
+        intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
+        startActivity(intent);
     }
 }

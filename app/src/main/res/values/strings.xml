@@ -29,5 +29,6 @@
     <string name="creator">Creator</string>
     <string name="me">Me</string>
     <string name="destroyed">DESTROYED</string>
-    <string name="qr_title">QR</string>>
+    <string name="qr_title">QR</string>
+    <string name="member_list_title">Members</string>
 </resources>
