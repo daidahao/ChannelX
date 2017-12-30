@@ -9,9 +9,16 @@ public class Member {
     private String userId;
     private String nickname;
     private long joinTime;
+    private String info;
 
     public Member() {
 
+    }
+
+    public Member(String userId,String nickname,String info){
+        this.userId=userId;
+        this.nickname=nickname;
+        this.info=info;
     }
 
     public Member(String nickname) {
@@ -41,5 +48,8 @@ public class Member {
 
     public void setJoinTime(long joinTime) {
         this.joinTime = joinTime;
+    }
+    public String getInfo(){
+        return this.info;
     }
 }
