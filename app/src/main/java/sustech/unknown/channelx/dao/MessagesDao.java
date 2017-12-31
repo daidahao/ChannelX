@@ -29,6 +29,7 @@ public class MessagesDao {
     private ObjectCommand<ChatMessage> chatMessageObjectCommand;
     private Command onSuccessCommand = new NoCommand();
     private Command onFailureCommand = new NoCommand();
+    private MessagesChildEventListener childEventListener;
 
 
     public MessagesDao(Channel channel, String userId) {
@@ -81,7 +82,14 @@ public class MessagesDao {
     }
 
     public void addListenerForChatMessage() {
-        getMessagesNode().addChildEventListener(new MessagesChildEventListener());
+        childEventListener = new MessagesChildEventListener();
+        getMessagesNode().addChildEventListener(childEventListener);
+    }
+
+    public void removeListenerForChatMessage() {
+        if (childEventListener != null) {
+            getMessagesNode().removeEventListener(childEventListener);
+        }
     }
 
     public Command getOnSuccessCommand() {

@@ -109,6 +109,9 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
     }
 
     private void initializeMessagesDao() {
+        if (messagesDao != null) {
+            messagesDao.removeListenerForChatMessage();
+        }
         messagesDao = new MessagesDao(channel, CurrentUser.getUser().getUid());
     }
 
