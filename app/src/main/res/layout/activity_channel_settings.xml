@@ -127,6 +127,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="48dp"
                 android:layout_marginTop="32dp"
+                android:text="@string/schedule"
+                android:textColor="@color/very_dark_gray"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView14" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="48dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/theme"
                 android:textColor="@color/very_dark_gray"
                 android:textSize="18sp"
@@ -202,6 +214,18 @@
             android:layout_height="match_parent"
             android:layout_weight="4"
             android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/schedule_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/default_schedule"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/theme_text" />
 
             <TextView
                 android:id="@+id/theme_text"
@@ -283,7 +307,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/theme_text" />
+                app:layout_constraintTop_toBottomOf="@+id/schedule_text" />
 
             <View
                 android:id="@+id/view5"

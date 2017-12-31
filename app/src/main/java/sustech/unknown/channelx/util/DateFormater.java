@@ -3,6 +3,7 @@ package sustech.unknown.channelx.util;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by dahao on 2017/12/20.
@@ -40,6 +41,13 @@ public class DateFormater {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         return hour * 60 + minute;
+    }
+
+    public static String minuteOfDayToString(int minuteOfDay) {
+        int hourOfDay = minuteOfDay / 60;
+        int minute = minuteOfDay % 60;
+        return String.format(Locale.getDefault(),
+                "%02d:%02d", hourOfDay, minute);
     }
 
 }

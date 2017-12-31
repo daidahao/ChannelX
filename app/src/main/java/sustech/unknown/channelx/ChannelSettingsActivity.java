@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -17,8 +16,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -53,6 +50,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     private TextView creatorLabel;
     private ImageView qrImage;
     private ImageView channelIcon;
+    private TextView scheduleLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +68,11 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         initializeButton();
         initializeQRImage();
         initializeChannelIcon();
+        initializeSchedule();
+    }
+
+    private void initializeSchedule() {
+        scheduleLabel = findViewById(R.id.schedule_text);
     }
 
     private void initializeChannelIcon() {
@@ -279,6 +282,11 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
             creatorLabel.setText(getApplicationContext().getString(R.string.me));
         }
         leaveButton.setEnabled(!channel.isDestroyed());
+        scheduleLabel.setText(
+                DateFormater.minuteOfDayToString(channel.getOpenTimeInMinute()) +
+                        " - " +
+                        DateFormater.minuteOfDayToString(channel.getClosedTimeInMinute())
+        );
     }
 
     private void startMoreMembersActivity() {

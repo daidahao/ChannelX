@@ -127,9 +127,9 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
             int currentMinute = DateFormater.getMinuteInDay();
             if (currentMinute < channel.getOpenTimeInMinute() ||
                     currentMinute > channel.getClosedTimeInMinute()) {
-                ToastUtil.makeToast(this, currentMinute + "The channel is not available now!");
+                ToastUtil.makeToast(this, "The channel is not available now!");
             } else {
-                ToastUtil.makeToast(this, "CurrentMinute: " + currentMinute);
+                // ToastUtil.makeToast(this, "CurrentMinute: " + currentMinute);
                 chatView.enableInput();
             }
         }

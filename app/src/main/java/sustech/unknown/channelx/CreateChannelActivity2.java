@@ -2,7 +2,6 @@ package sustech.unknown.channelx;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,20 +16,19 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import sustech.unknown.channelx.command.CreateChannelOnFailureCommand;
 import sustech.unknown.channelx.command.CreateChannelOnSuccessCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
-import sustech.unknown.channelx.dao.StorageDao;
 import sustech.unknown.channelx.dao.ThemeDao;
 import sustech.unknown.channelx.fragment.DatePickerFragment;
+import sustech.unknown.channelx.fragment.TimePickerFragment;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.util.DateFormater;
@@ -48,6 +46,14 @@ public class CreateChannelActivity2 extends AppCompatActivity {
     private TextView themeTextView;
     private HashMap<String, Map> allThemesMap;
     private Channel channel;
+
+    private int openHourOfDay;
+    private int openMinute;
+    private int closedHourOfDay;
+    private int closedMinute;
+
+    private EditText openTimeText;
+    private EditText closedTimeText;
 
 
     private CircleImageView photoimage;
@@ -70,6 +76,49 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         initializeNameText();
         initializeExpiredSwitch();
         initializeImageView();
+
+        initializeTimeText();
+    }
+
+    private void initializeTimeText() {
+
+        this.openHourOfDay = 0;
+        this.openMinute = 0;
+
+        this.closedHourOfDay = 24;
+        this.closedMinute = 0;
+
+        openTimeText = findViewById(R.id.openMinuteText);
+        closedTimeText = findViewById(R.id.closedMinuteText);
+
+        openTimeText.setOnClickListener(
+                new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Configuration.OPEN, true);
+                bundle.putInt(Configuration.HOUR_OF_DAY, openHourOfDay);
+                bundle.putInt(Configuration.MINUTE, openMinute);
+
+                DialogFragment timePickerFragment = new TimePickerFragment();
+                timePickerFragment.setArguments(bundle);
+                timePickerFragment.show(getFragmentManager(), "timePicker");
+            }
+        });
+
+        closedTimeText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Configuration.OPEN, false);
+                bundle.putInt(Configuration.HOUR_OF_DAY, closedHourOfDay);
+                bundle.putInt(Configuration.MINUTE, closedMinute);
+
+                DialogFragment timePickerFragment = new TimePickerFragment();
+                timePickerFragment.setArguments(bundle);
+                timePickerFragment.show(getFragmentManager(), "timePicker");
+            }
+        });
     }
 
     private void initializeImageView(){
@@ -185,6 +234,9 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         if (!expriedSwitch.isChecked()) {
             channel.setExpiredTime(Long.MAX_VALUE);
         }
+        channel.setOpenTimeInMinute(this.openHourOfDay * 60 + this.openMinute);
+        channel.setClosedTimeInMinute(this.closedHourOfDay * 60 + this.closedMinute);
+
         view.setClickable(false);
         CreateChannelOnSuccessCommand onSuccessCommand =
                 new CreateChannelOnSuccessCommand(this);
@@ -259,6 +311,7 @@ public class CreateChannelActivity2 extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PHOTO_REQUEST_GALLERY) {
@@ -301,5 +354,29 @@ public class CreateChannelActivity2 extends AppCompatActivity {
         intent.setType("image/*");
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
         startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+    }
+
+    public void setTime(boolean open, int hourOfDay, int minute) {
+        int minuteOfDay = hourOfDay * 60 + minute;
+        if (open) {
+            int currentClosedMinuteOfDay = this.closedHourOfDay * 60 + this.closedMinute;
+            if (minuteOfDay >= currentClosedMinuteOfDay) {
+                minuteOfDay = currentClosedMinuteOfDay - 1;
+            }
+            this.openHourOfDay = minuteOfDay / 60;
+            this.openMinute = minuteOfDay % 60;
+            openTimeText.setText(DateFormater.minuteOfDayToString(minuteOfDay));
+        } else {
+            int currentOpenMinuteOfDay = this.openHourOfDay * 60 + this.openMinute;
+            if (minuteOfDay == 0) {
+                minuteOfDay = 1440;
+            }
+            else if (minuteOfDay <= currentOpenMinuteOfDay) {
+                minuteOfDay = currentOpenMinuteOfDay + 1;
+            }
+            this.closedHourOfDay = minuteOfDay / 60;
+            this.closedMinute = minuteOfDay % 60;
+            closedTimeText.setText(DateFormater.minuteOfDayToString(minuteOfDay));
+        }
     }
 }
