@@ -94,7 +94,7 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
             onReadChannelFailure("Cannot read the channel!");
             return;
         }
-        initializeToolbar(channel.getName() + " (" + channel.readKey() + ")");
+        initializeToolbar(channel.getName());
         initializeInput();
         initializeMessagesDao();
         initializeMessagesListener();
@@ -131,8 +131,10 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+
+        // getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu);
+
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         if (title != null) {
             toolbarTitle.setText(title);
@@ -152,6 +154,8 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
                 // ToastUtil.makeToast(this, "You clicked settings");
                 startChannelSettingsActivity();
                 break;
+            default:
+                finish();
         }
         return true;
     }
