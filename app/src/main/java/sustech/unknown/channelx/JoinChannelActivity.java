@@ -37,6 +37,7 @@ public class JoinChannelActivity extends AppCompatActivity {
 
         initializeToolbar();
         initializeEditText();
+        JoinByScanner();
         // Setup SurfaceView
         // -----------------
 
@@ -67,65 +68,55 @@ public class JoinChannelActivity extends AppCompatActivity {
 
     public void onJoinChannelByScan(View view) {
         Intent i = new Intent(this, CaptureActivity.class);
-       // i.putExtra("channelID", "");
+        // i.putExtra("channelID", "");
         this.startActivityForResult(i, REQUEST_QR_CODE);
 
         //checkChannelExists(editText.getText().toString());
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    private void JoinByScanner() {
+        Intent i = new Intent(this, CaptureActivity.class);
+        this.startActivityForResult(i, REQUEST_QR_CODE);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK
-                && requestCode == REQUEST_QR_CODE
-                && data != null) {
-            String result = data.getStringExtra("result");
-            editText.setText(result);
-            checkChannelExists(editText.getText().toString());
-            //Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
 
-        }
     }
 
     private void checkChannelExists(String channelId) {
-        JoinChannelOnSuccessMessageCommand onSuccessMessageCommand =
-                new JoinChannelOnSuccessMessageCommand(this);
-        JoinChannelOnFailureMessageCommand onFailureMessageCommand =
-                new JoinChannelOnFailureMessageCommand(this);
-        ChannelDao channelDao =
-                new ChannelDao(onSuccessMessageCommand, onFailureMessageCommand);
+//        JoinChannelOnSuccessMessageCommand onSuccessMessageCommand =
+//                new JoinChannelOnSuccessMessageCommand(this);
+//        JoinChannelOnFailureMessageCommand onFailureMessageCommand =
+//                new JoinChannelOnFailureMessageCommand(this);
+//        ChannelDao channelDao =
+//                new ChannelDao(onSuccessMessageCommand, onFailureMessageCommand);
 
-        if (!channelId.trim().isEmpty()){
-            this.channelId = channelId.trim();
-            // channelDao.joinChannel(this.channelId);
-            String contactInfo = null;
-            if (CurrentUser.getUser().getEmail() != null) {
-                contactInfo = CurrentUser.getUser().getEmail();
-            }
-            if (CurrentUser.getUser().getPhoneNumber() != null) {
-                contactInfo = CurrentUser.getUser().getPhoneNumber();
-            }
-            channelDao.joinChannel(this.channelId,
-                    CurrentUser.getUser().getUid(),
-                    CurrentUser.getUser().getDisplayName(),
-                    contactInfo);
-        } else {
-            ToastUtil.makeToast(this, "Channel ID shouldn't be empty");
-        }
+//        if (!channelId.trim().isEmpty()){
+//            this.channelId = channelId.trim();
+//            // channelDao.joinChannel(this.channelId);
+//            String contactInfo = null;
+//            if (CurrentUser.getUser().getEmail() != null) {
+//                contactInfo = CurrentUser.getUser().getEmail();
+//            }
+//            if (CurrentUser.getUser().getPhoneNumber() != null) {
+//                contactInfo = CurrentUser.getUser().getPhoneNumber();
+//            }
+//            channelDao.joinChannel(this.channelId,
+//                    CurrentUser.getUser().getUid(),
+//                    CurrentUser.getUser().getDisplayName(),
+//                    contactInfo);
+//        } else {
+//            ToastUtil.makeToast(this, "Channel ID shouldn't be empty");
+//        }
     }
 
-    public void onSuccess(String message) {
-        ToastUtil.makeToast(this, message);
-        Intent intent = new Intent();
-        intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, this.channelId);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
 
-    public void onFailure(String message) {
-        ToastUtil.makeToast(this, message);
-        setResult(RESULT_CANCELED);
-        finish();
-
-    }
 
 }

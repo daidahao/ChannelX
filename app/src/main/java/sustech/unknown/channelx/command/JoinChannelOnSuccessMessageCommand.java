@@ -1,5 +1,8 @@
 package sustech.unknown.channelx.command;
 
+import android.app.Activity;
+
+import sustech.unknown.channelx.ChannelsActivity;
 import sustech.unknown.channelx.JoinChannelActivity;
 
 /**
@@ -8,11 +11,12 @@ import sustech.unknown.channelx.JoinChannelActivity;
 
 public class JoinChannelOnSuccessMessageCommand extends MessageCommand {
 
-    private JoinChannelActivity activity;
+    private ChannelsActivity activity;
 
-    public JoinChannelOnSuccessMessageCommand(JoinChannelActivity activity) {
+    public JoinChannelOnSuccessMessageCommand(ChannelsActivity activity) {
         this.activity = activity;
     }
+
 
     @Override
     public void execute() {

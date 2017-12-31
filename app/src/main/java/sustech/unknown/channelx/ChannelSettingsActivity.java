@@ -1,6 +1,7 @@
 package sustech.unknown.channelx;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,9 +12,15 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
+
+import java.io.IOException;
 
 import sustech.unknown.channelx.command.LeaveChannelOnSuccessCommand;
 import sustech.unknown.channelx.command.ReadChannelInterface;
@@ -21,6 +28,7 @@ import sustech.unknown.channelx.command.ReadChannelObjectCommand;
 import sustech.unknown.channelx.command.ReadChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelOnSuccessMessageCommand;
 import sustech.unknown.channelx.dao.ChannelDao;
+import sustech.unknown.channelx.dao.StorageDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.util.DateFormater;
@@ -28,8 +36,11 @@ import sustech.unknown.channelx.util.ToastUtil;
 
 public class ChannelSettingsActivity extends AppCompatActivity implements ReadChannelInterface {
 
+
+    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int QR_REQUEST = 0;
     private Toolbar toolbar;
+
     // private TextView toolbarTitle;
     private Channel channel;
     private TextView channelNameLabel;
@@ -41,6 +52,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     private Button leaveButton;
     private TextView creatorLabel;
     private ImageView qrImage;
+    private ImageView channelIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +69,63 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         initializeMore();
         initializeButton();
         initializeQRImage();
+        initializeChannelIcon();
+    }
+
+    private void initializeChannelIcon() {
+        channelIcon = findViewById(R.id.channelImageView);
+        channelIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // gallery();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PHOTO_REQUEST_GALLERY) {
+            // 从相册返回的数据
+            if (data != null) {
+                // 得到图片的全路径
+                Uri uri =data.getData();
+                channelIcon.setImageURI(uri );
+                StorageDao dao = new StorageDao();
+                dao.uploadUserPhoto(uri, CurrentUser.getUser().getUid());
+                //dao.uplo
+
+            }
+        }
+    }
+
+    public void downloadIcon() throws IOException {
+        //icon = findViewById(R.id.icon_image);
+//        if(CurrentUser.isLogin()){
+           StorageDao storageDao = new StorageDao();
+           String a = getIntent().getStringExtra(Configuration.CHANNEL_KEY_MESSAGE);
+            StorageReference storageReference = storageDao.downloadChannelImageByKey(getIntent().getStringExtra(Configuration.CHANNEL_KEY_MESSAGE));
+//            // tempIcon = File.createTempFile("userTempIcon","jpg");
+            final long FIVE_MEGABYTE = 5* 1024 * 1024;
+            storageReference.getBytes(FIVE_MEGABYTE);
+          //  storageReference.nu
+         //   uri = Uri.fromFile(tempIcon);
+            Glide.with(this /* context */)
+                    .using(new FirebaseImageLoader())
+                    .load(storageReference)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(channelIcon);
+        }
+
+
+    public  void  gallery() {
+
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
     }
 
     private void initializeCreator() {
@@ -104,14 +173,19 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         }
         Intent intent = new Intent(this, QRActivity.class);
         intent.putExtra(Configuration.CHANNEL_KEY_MESSAGE, channel.readKey());
+
         startActivity(intent);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         readChannelFromIntent(getIntent());
+        try {
+            downloadIcon();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initializeMore() {

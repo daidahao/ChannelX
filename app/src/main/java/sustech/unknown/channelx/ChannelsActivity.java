@@ -46,6 +46,9 @@ import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import io.github.xudaojie.qrcodelib.CaptureActivity;
+import sustech.unknown.channelx.command.JoinChannelOnFailureMessageCommand;
+import sustech.unknown.channelx.command.JoinChannelOnSuccessMessageCommand;
 import sustech.unknown.channelx.command.PhotoUploadFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelsListRemoveObjectCommand;
 import sustech.unknown.channelx.dao.StorageDao;
@@ -80,6 +83,7 @@ public class ChannelsActivity extends AppCompatActivity {
     private CircleImageView icon;
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
+    private static final int REQUEST_QR_CODE = 1;
 
     private NavigationView navView;
 
@@ -220,8 +224,10 @@ public class ChannelsActivity extends AppCompatActivity {
     }
 
     private void onJoinChannel() {
-        Intent intent = new Intent(this, JoinChannelActivity.class);
-        startActivityForResult(intent, Configuration.JOIN_CHANNEL_REQUEST);
+//        Intent intent = new Intent(this, JoinChannelActivity.class);
+//        startActivityForResult(intent, Configuration.JOIN_CHANNEL_REQUEST);
+        Intent i = new Intent(this, CaptureActivity.class);
+        this.startActivityForResult(i, REQUEST_QR_CODE);
     }
 
     @Override
@@ -347,6 +353,34 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, Configuration.CREATE_CHANNEL_1_REQUEST);
     }
 
+    private void checkChannelExists(String channelId) {
+        JoinChannelOnSuccessMessageCommand onSuccessMessageCommand =
+                new JoinChannelOnSuccessMessageCommand(this);
+        JoinChannelOnFailureMessageCommand onFailureMessageCommand =
+                new JoinChannelOnFailureMessageCommand(this);
+        ChannelDao channelDao =
+                new ChannelDao(onSuccessMessageCommand, onFailureMessageCommand);
+
+
+        if (!channelId.trim().isEmpty()){
+            channelId= channelId.trim();
+            // channelDao.joinChannel(this.channelId);
+            String contactInfo = null;
+            if (CurrentUser.getUser().getEmail() != null) {
+                contactInfo = CurrentUser.getUser().getEmail();
+            }
+            if (CurrentUser.getUser().getPhoneNumber() != null) {
+                contactInfo = CurrentUser.getUser().getPhoneNumber();
+            }
+            channelDao.joinChannel(channelId,
+                    CurrentUser.getUser().getUid(),
+                    CurrentUser.getUser().getDisplayName(),
+                    contactInfo);
+        } else {
+            ToastUtil.makeToast(this, "Channel ID shouldn't be empty");
+        }
+    }
+
     // 注销方法
     public void signout() {
         FirebaseAuth.getInstance().signOut();
@@ -387,8 +421,8 @@ public class ChannelsActivity extends AppCompatActivity {
     public void onFailure() {
         ToastUtil.makeToast(this,
                 "Photo upload failure");
-        setResult(RESULT_CANCELED);
-        finish();
+//        setResult(RESULT_CANCELED);
+//        finish();
     }
 
     @Override
@@ -410,6 +444,17 @@ public class ChannelsActivity extends AppCompatActivity {
                 Log.w("SIGNIN", "Sign-in failed.");
             }
             return;
+        }
+        if (resultCode == RESULT_OK
+                && requestCode == REQUEST_QR_CODE
+                && data != null) {
+            String result = data.getStringExtra("result");
+            if (result.contains("ChannelX:")){
+                result = result.replace("ChannelX:","");
+            }
+            checkChannelExists(result);
+            //Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+
         }
         if (requestCode == Configuration.CREATE_CHANNEL_1_REQUEST) {
             if (resultCode == RESULT_OK) {
@@ -508,5 +553,18 @@ public class ChannelsActivity extends AppCompatActivity {
         if (index != -1) {
             list.remove(index);
         }
+    }
+    public void onSuccess(String message) {
+        ToastUtil.makeToast(this, message);
+//        Intent intent = new Intent();
+//        setResult(RESULT_OK, intent);
+      //  finish();
+    }
+
+    public void onFailure(String message) {
+        ToastUtil.makeToast(this, message);
+//        setResult(RESULT_CANCELED);
+       // finish();
+
     }
 }
