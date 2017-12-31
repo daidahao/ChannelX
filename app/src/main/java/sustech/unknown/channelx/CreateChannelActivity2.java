@@ -2,6 +2,7 @@ package sustech.unknown.channelx;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -73,6 +74,8 @@ public class CreateChannelActivity2 extends AppCompatActivity {
 
     private void initializeImageView(){
         photoimage = findViewById(R.id.channelImageView);
+        photoimage.setImageResource(R.mipmap.ic_launcher);
+        uri =  Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" +R.mipmap.ic_launcher);
         photoimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

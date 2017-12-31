@@ -77,7 +77,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         channelIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // gallery();
+                gallery();
             }
         });
     }
@@ -92,7 +92,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
                 Uri uri =data.getData();
                 channelIcon.setImageURI(uri );
                 StorageDao dao = new StorageDao();
-                dao.uploadUserPhoto(uri, CurrentUser.getUser().getUid());
+                dao.uploadChannelPhoto(uri, getIntent().getStringExtra(Configuration.CHANNEL_KEY_MESSAGE));
                 //dao.uplo
 
             }
