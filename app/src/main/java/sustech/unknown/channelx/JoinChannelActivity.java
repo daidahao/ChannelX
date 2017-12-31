@@ -98,10 +98,11 @@ public class JoinChannelActivity extends AppCompatActivity {
             this.channelId = channelId.trim();
             // channelDao.joinChannel(this.channelId);
             String contactInfo = null;
-            if (CurrentUser.getUser().getEmail() != null) {
+            if (CurrentUser.getUser().getEmail() != null &&
+                    !CurrentUser.getUser().getEmail().trim().isEmpty()) {
                 contactInfo = CurrentUser.getUser().getEmail();
             }
-            if (CurrentUser.getUser().getPhoneNumber() != null) {
+            else {
                 contactInfo = CurrentUser.getUser().getPhoneNumber();
             }
             channelDao.joinChannel(this.channelId,
