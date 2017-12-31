@@ -10,6 +10,9 @@ import java.util.Date;
 public class DateFormater {
 
     public static String dateToString(int year, int month, int mday) {
+        if (year > 2200) {
+            return "NEVER EXPIRED";
+        }
         return (year + "-" + (month + 1) + "-" + mday);
     }
 
