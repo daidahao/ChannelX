@@ -69,6 +69,8 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
         initializeQRImage();
         initializeChannelIcon();
         initializeSchedule();
+
+        readChannelFromIntent(getIntent());
     }
 
     private void initializeSchedule() {
@@ -183,7 +185,7 @@ public class ChannelSettingsActivity extends AppCompatActivity implements ReadCh
     @Override
     protected void onStart() {
         super.onStart();
-        readChannelFromIntent(getIntent());
+
         try {
             downloadIcon();
         } catch (IOException e) {
