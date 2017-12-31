@@ -22,6 +22,8 @@ public class Channel {
     private Map<String, Member> members = new HashMap<>();
     private Map<String, String> themeList = new HashMap<>();
     private Map<String, ChatMessage> messages = new HashMap<>();
+    private int openTimeInMinute;
+    private int closedTimeInMinute;
 
     @Override
     public boolean equals(Object obj) {
@@ -33,13 +35,10 @@ public class Channel {
 
     public Channel(){
         this.isDestroyed = false;
+        openTimeInMinute = 0;
+        closedTimeInMinute = 1440;
     }
 
-    public Channel (String name, int imageId,long time){
-        this.name=name;
-        this.imageId=imageId;
-        this.expiredTime = time;
-    }
     public String getName() {
         return name;
     }
@@ -148,5 +147,21 @@ public class Channel {
 
     public void setMessages(Map<String, ChatMessage> messages) {
         this.messages = messages;
+    }
+
+    public int getOpenTimeInMinute() {
+        return openTimeInMinute;
+    }
+
+    public void setOpenTimeInMinute(int openTimeInMinute) {
+        this.openTimeInMinute = openTimeInMinute;
+    }
+
+    public int getClosedTimeInMinute() {
+        return closedTimeInMinute;
+    }
+
+    public void setClosedTimeInMinute(int closedTimeInMinute) {
+        this.closedTimeInMinute = closedTimeInMinute;
     }
 }

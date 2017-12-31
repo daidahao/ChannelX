@@ -41,7 +41,6 @@ public class MessagesDao {
                 .child(Configuration.channelKey)
                 .child(channel.readKey())
                 .child(Configuration.messagesKey);
-
     }
 
     public void addMessage(ChatMessage chatMessage) {

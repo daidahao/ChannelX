@@ -26,6 +26,7 @@ import sustech.unknown.channelx.dao.MessagesDao;
 import sustech.unknown.channelx.model.Channel;
 import sustech.unknown.channelx.model.CurrentUser;
 import sustech.unknown.channelx.model.DatabaseRoot;
+import sustech.unknown.channelx.util.DateFormater;
 import sustech.unknown.channelx.util.ToastUtil;
 
 public class ChatActivity extends AppCompatActivity implements ReadChannelInterface {
@@ -123,7 +124,14 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
         } else if (channel.isDestroyed()){
             ToastUtil.makeToast(this, "The channel has been destroyed!");
         } else {
-            chatView.enableInput();
+            int currentMinute = DateFormater.getMinuteInDay();
+            if (currentMinute < channel.getOpenTimeInMinute() ||
+                    currentMinute > channel.getClosedTimeInMinute()) {
+                ToastUtil.makeToast(this, currentMinute + "The channel is not available now!");
+            } else {
+                ToastUtil.makeToast(this, "CurrentMinute: " + currentMinute);
+                chatView.enableInput();
+            }
         }
     }
 

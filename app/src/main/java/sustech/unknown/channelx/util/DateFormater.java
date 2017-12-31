@@ -1,5 +1,6 @@
 package sustech.unknown.channelx.util;
 
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,6 +33,13 @@ public class DateFormater {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(time);
         return calendarToString(c);
+    }
+
+    public static int getMinuteInDay() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        return hour * 60 + minute;
     }
 
 }
