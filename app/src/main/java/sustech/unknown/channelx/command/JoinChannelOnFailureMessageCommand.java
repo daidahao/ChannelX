@@ -1,5 +1,8 @@
 package sustech.unknown.channelx.command;
 
+import android.app.Activity;
+
+import sustech.unknown.channelx.ChannelsActivity;
 import sustech.unknown.channelx.JoinChannelActivity;
 
 /**
@@ -8,9 +11,9 @@ import sustech.unknown.channelx.JoinChannelActivity;
 
 public class JoinChannelOnFailureMessageCommand extends MessageCommand {
 
-    private JoinChannelActivity activity;
+    private ChannelsActivity activity;
 
-    public JoinChannelOnFailureMessageCommand(JoinChannelActivity activity) {
+    public JoinChannelOnFailureMessageCommand(ChannelsActivity activity) {
         this.activity = activity;
     }
 

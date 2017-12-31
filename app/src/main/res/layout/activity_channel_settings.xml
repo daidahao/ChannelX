@@ -60,6 +60,7 @@
             app:layout_constraintHorizontal_bias="0.502" />
 
         <ImageView
+            android:id="@+id/QR_image"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginBottom="8dp"

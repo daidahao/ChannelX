@@ -108,11 +108,15 @@ public class MessagesDao {
                 return;
             }
             Log.d("chatMessage", chatMessage.getMessage());
-            chatMessage.setNickname(
-                    channel.getMembers().get(
-                            chatMessage.getUserid()
-                    ).getNickname()
-            );
+
+            if (channel.getMembers().get(chatMessage.getUserid()) == null) {
+                chatMessage.setNickname("New User");
+            } else {
+                chatMessage.setNickname(
+                        channel.getMembers().get(chatMessage.getUserid()).getNickname()
+                );
+            }
+
             if (chatMessage.getUserid().equals(userId)){
                 chatMessage.setType(ChatMessage.Type.SENT);
             }
