@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/findc"
-        android:icon="@drawable/find"
+        android:icon="@drawable/scan"
         android:title="@string/join_channel"
         app:showAsAction="always"
         />
