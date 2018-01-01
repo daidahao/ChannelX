@@ -365,11 +365,14 @@ public class ChannelsActivity extends AppCompatActivity {
         if (!channelId.trim().isEmpty()){
             channelId= channelId.trim();
             // channelDao.joinChannel(this.channelId);
+            Log.d("joinChannel_channels", "email=" + CurrentUser.getUser().getEmail());
+            Log.d("joinChannel_channels",  "phone=" + CurrentUser.getUser().getPhoneNumber());
             String contactInfo = null;
-            if (CurrentUser.getUser().getEmail() != null) {
+            if (CurrentUser.getUser().getEmail() != null &&
+                    !CurrentUser.getUser().getEmail().trim().isEmpty()) {
                 contactInfo = CurrentUser.getUser().getEmail();
             }
-            if (CurrentUser.getUser().getPhoneNumber() != null) {
+            else {
                 contactInfo = CurrentUser.getUser().getPhoneNumber();
             }
             channelDao.joinChannel(channelId,
@@ -523,7 +526,8 @@ public class ChannelsActivity extends AppCompatActivity {
         if (channelKey == null || channelKey.trim().isEmpty()) {
             return;
         }
-        Log.d("joinChannel_channels", "email=" + CurrentUser.getUser().getEmail() + " phone=" + CurrentUser.getUser().getPhoneNumber());
+        Log.d("joinChannel_channels", "email=" + CurrentUser.getUser().getEmail());
+        Log.d("joinChannel_channels",  "phone=" + CurrentUser.getUser().getPhoneNumber());
         String contactInfo = null;
         if (CurrentUser.getUser().getEmail() != null &&
                 !CurrentUser.getUser().getEmail().trim().isEmpty()) {
