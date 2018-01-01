@@ -413,9 +413,20 @@ public class ChannelsActivity extends AppCompatActivity {
         startActivityForResult(intent, Configuration.RC_SIGN_IN);
     }
 
+    private void removeChannelsListDao(ChannelsListDao channelsListDao) {
+        if (channelsListDao != null) {
+            channelsListDao.removeChildEventListeners();
+        }
+    }
+
     private void clearChannelsList() {
+        removeChannelsListDao(channelsListDao);
         channelsListDao = null;
         channelList.clear();
+        expiredChannelList.clear();
+        adapter.notifyDataSetChanged();
+        expiredAdapter.notifyDataSetChanged();
+
     }
 
     public void onFailure() {
@@ -433,7 +444,7 @@ public class ChannelsActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                clearChannelsList();
+                // clearChannelsList();
                 try {
                     downloadIcon();
                 } catch (IOException e) {
