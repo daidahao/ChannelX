@@ -11,7 +11,7 @@
         android:layout_height="70dp"
         android:layout_centerInParent="true"
         android:onClick="gallery"
-        android:src="@drawable/headportrait" />
+        android:src="@drawable/profile" />
 
     <TextView
         android:id="@+id/username"
