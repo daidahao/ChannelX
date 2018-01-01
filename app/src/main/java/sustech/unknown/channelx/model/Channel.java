@@ -170,6 +170,10 @@ public class Channel {
         if (name == null) {
             name = Configuration.DEFAULT_CHANNEL_NAME;
         }
-        name = name.substring(0, 20);
+        if (name.length() > 20) {
+            name = name.substring(0, 20);
+        } else {
+            
+        }
     }
 }
