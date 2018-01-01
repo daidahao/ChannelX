@@ -1,4 +1,4 @@
-package sustech.unknown.channelx;
+package sustech.unknown.channelx.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import sustech.unknown.channelx.R;
 import sustech.unknown.channelx.model.Member;
 
 /**

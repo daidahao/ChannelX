@@ -3,7 +3,6 @@ package sustech.unknown.channelx;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -28,28 +27,23 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import io.github.xudaojie.qrcodelib.CaptureActivity;
+import sustech.unknown.channelx.adapter.ChannelsAdapter;
+import sustech.unknown.channelx.adapter.ExpireChannelsAdapter;
 import sustech.unknown.channelx.command.JoinChannelOnFailureMessageCommand;
 import sustech.unknown.channelx.command.JoinChannelOnSuccessMessageCommand;
-import sustech.unknown.channelx.command.PhotoUploadFailureMessageCommand;
 import sustech.unknown.channelx.command.ReadChannelsListRemoveObjectCommand;
 import sustech.unknown.channelx.dao.StorageDao;
 

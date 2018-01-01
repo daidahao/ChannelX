@@ -25,7 +25,7 @@ public final class Configuration {
     static final int RESULT_DESTROYED = 700;
 
 
-    static final String CHANNEL_KEY_MESSAGE =
+    public static final String CHANNEL_KEY_MESSAGE =
             "sustech.unknown.channelx.CHANNEL_KEY";
 
     static String ANONYMOUS_EXTRA =

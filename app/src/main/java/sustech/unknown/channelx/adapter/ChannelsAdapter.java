@@ -1,4 +1,4 @@
-package sustech.unknown.channelx;
+package sustech.unknown.channelx.adapter;
 
 /**
  * Created by Administrator on 2017/12/16.
@@ -12,14 +12,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import sustech.unknown.channelx.ChatActivity;
+import sustech.unknown.channelx.Configuration;
+import sustech.unknown.channelx.R;
+import sustech.unknown.channelx.dao.StorageDao;
 import sustech.unknown.channelx.model.*;
 import sustech.unknown.channelx.util.DateFormater;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
-public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAdapter.ViewHolder>{
+public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHolder>{
 
     private static final String TAG = "ChannelsAdapter";
 
@@ -41,7 +49,7 @@ public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAd
         }
     }
 
-    public ExpireChannelsAdapter(List<Channel> channelList) {
+    public ChannelsAdapter(List<Channel> channelList) {
         mChannelList = channelList;
     }
 
@@ -66,16 +74,21 @@ public class ExpireChannelsAdapter extends RecyclerView.Adapter<ExpireChannelsAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Channel channel = mChannelList.get(position);
         holder.channelName.setText(channel.getName());
-        if (channel.isDestroyed()) {
-            holder.expire.setText(mContext.getApplicationContext().getString(R.string.destroyed));
-        } else {
-            holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
-        }
-        holder.expire.setTextColor(mContext.getResources().getColor(R.color.red));
-        Glide.with(mContext).load(channel.getImageId()).into(holder.channelImage);
+        holder.expire.setText(DateFormater.longToString(channel.getExpiredTime()));
+        StorageDao storageDao = new StorageDao();
+        StorageReference storageReference = storageDao.downloadChannelImageByKey(channel.readKey());
+        Glide.with(mContext)
+                .using(new FirebaseImageLoader())
+                .load(storageReference)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.channelImage);
+        //holder.channelImage.set
+        //add image  but bug exist
+//        Glide.with(mContext).load(channel.readKey()).into(holder.channelImage);
     }
 
     @Override
