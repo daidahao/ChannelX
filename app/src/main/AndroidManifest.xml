@@ -25,6 +25,7 @@
         </activity>
         <activity
             android:name=".ChatActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".ChannelsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -54,23 +55,30 @@
         </activity>
         <activity
             android:name=".ChannelSettingsActivity"
-            android:parentActivityName=".ChatActivity">
+            android:parentActivityName=".ChatActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ChatActivity" />
         </activity>
+
         <activity android:name=".MembersActivity"
             android:parentActivityName=".ChannelSettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ChannelSettingsActivity" />
         </activity>
-        <activity android:name="io.github.xudaojie.qrcodelib.CaptureActivity" />
 
         <activity android:name=".QRActivity"
-            android:parentActivityName=".ChannelSettingsActivity">>
+            android:parentActivityName=".ChannelSettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChannelSettingsActivity" />
+        </activity>
 
-            </activity>>
+        <activity android:name="io.github.xudaojie.qrcodelib.CaptureActivity" />
+
+
     </application>
 
 </manifest>
