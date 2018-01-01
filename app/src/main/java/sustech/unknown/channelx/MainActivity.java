@@ -58,7 +58,7 @@ import sustech.unknown.channelx.util.ToastUtil;
  * Created by Administrator on 2017/12/16.
  */
 
-public class ChannelsActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
 
@@ -302,7 +302,7 @@ public class ChannelsActivity extends AppCompatActivity {
             storageReference.getBytes(FIVE_MEGABYTE);
             //storageReference.nu
             //uri = Uri.fromFile(tempIcon);
-            Glide.with(ChannelsActivity.this /* context */)
+            Glide.with(MainActivity.this /* context */)
                     .using(new FirebaseImageLoader())
                     .load(storageReference)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

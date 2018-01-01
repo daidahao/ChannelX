@@ -1,8 +1,6 @@
 package sustech.unknown.channelx.command;
 
-import android.app.Activity;
-
-import sustech.unknown.channelx.ChannelsActivity;
+import sustech.unknown.channelx.MainActivity;
 
 /**
  * Created by Shen on 2017/12/27.
@@ -10,18 +8,18 @@ import sustech.unknown.channelx.ChannelsActivity;
 
 public class PhotoUploadFailureMessageCommand implements Command{
 
-    ChannelsActivity channelsActivity;
+    MainActivity mainActivity;
 
-    public PhotoUploadFailureMessageCommand(ChannelsActivity channelsActivity) {
-        this.channelsActivity = channelsActivity;
+    public PhotoUploadFailureMessageCommand(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
     }
 
     @Override
     public void execute() {
-        channelsActivity.runOnUiThread(new Runnable() {
+        mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                channelsActivity.onFailure();
+                mainActivity.onFailure();
             }
         });
     }

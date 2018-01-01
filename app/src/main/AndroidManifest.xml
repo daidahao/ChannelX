@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <activity android:name=".ChannelsActivity" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,18 +26,18 @@
         <activity
             android:name=".ChatActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ChannelsActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ChannelsActivity" />
+                android:value=".MainActivity" />
 
         </activity>
         <activity
             android:name=".CreateChannelActivity1"
-            android:parentActivityName=".ChannelsActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ChannelsActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".CreateChannelActivity2"
@@ -48,10 +48,10 @@
         </activity>
         <activity
             android:name=".JoinChannelActivity"
-            android:parentActivityName=".ChannelsActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ChannelsActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".ChannelSettingsActivity"

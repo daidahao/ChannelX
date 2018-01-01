@@ -1,6 +1,6 @@
 package sustech.unknown.channelx.command;
 
-import sustech.unknown.channelx.ChannelsActivity;
+import sustech.unknown.channelx.MainActivity;
 import sustech.unknown.channelx.model.Channel;
 
 /**
@@ -9,9 +9,9 @@ import sustech.unknown.channelx.model.Channel;
 
 public class ReadChannelsListAddObjectCommand extends ObjectCommand<Channel> {
 
-    private ChannelsActivity activity;
+    private MainActivity activity;
 
-    public ReadChannelsListAddObjectCommand(ChannelsActivity activity) {
+    public ReadChannelsListAddObjectCommand(MainActivity activity) {
         this.activity = activity;
     }
 

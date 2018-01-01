@@ -1,9 +1,6 @@
 package sustech.unknown.channelx.command;
 
-import android.app.Activity;
-
-import sustech.unknown.channelx.ChannelsActivity;
-import sustech.unknown.channelx.JoinChannelActivity;
+import sustech.unknown.channelx.MainActivity;
 
 /**
  * Created by dahao on 2017/12/22.
@@ -11,9 +8,9 @@ import sustech.unknown.channelx.JoinChannelActivity;
 
 public class JoinChannelOnSuccessMessageCommand extends MessageCommand {
 
-    private ChannelsActivity activity;
+    private MainActivity activity;
 
-    public JoinChannelOnSuccessMessageCommand(ChannelsActivity activity) {
+    public JoinChannelOnSuccessMessageCommand(MainActivity activity) {
         this.activity = activity;
     }
 
