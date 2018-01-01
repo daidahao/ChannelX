@@ -47,13 +47,6 @@
                 android:value=".CreateChannelActivity1" />
         </activity>
         <activity
-            android:name=".JoinChannelActivity"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
             android:name=".ChannelSettingsActivity"
             android:parentActivityName=".ChatActivity"
             android:launchMode="singleTop">
