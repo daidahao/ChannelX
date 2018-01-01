@@ -14,6 +14,7 @@ public final class Configuration {
     public static final String OPEN = "OPEN";
     public static final String HOUR_OF_DAY = "HOUR_OF_DAY";
     public static final String MINUTE = "MINUTE_HOUR_DAY";
+    public static final String DEFAULT_CHANNEL_NAME = "DEFAULT CHANNEL NAME";
 
     static final int CREATE_CHANNEL_2_REQUEST = 666;
     static final int ENTER_CHANNEL_REQUEST = 111;

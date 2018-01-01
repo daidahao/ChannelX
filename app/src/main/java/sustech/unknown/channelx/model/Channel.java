@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.intentservice.chatui.models.ChatMessage;
+import sustech.unknown.channelx.Configuration;
 
 /**
  * Created by dahao on 2017/12/14.
@@ -163,5 +164,12 @@ public class Channel {
 
     public void setClosedTimeInMinute(int closedTimeInMinute) {
         this.closedTimeInMinute = closedTimeInMinute;
+    }
+
+    public void checkAndSetLegalName() {
+        if (name == null) {
+            name = Configuration.DEFAULT_CHANNEL_NAME;
+        }
+        name = name.substring(0, 20);
     }
 }

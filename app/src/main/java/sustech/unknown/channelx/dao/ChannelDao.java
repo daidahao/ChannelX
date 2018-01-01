@@ -75,6 +75,9 @@ public class ChannelDao {
         DatabaseReference channelChild = getChannelRoot().push();
         //set channel uri path = default value unknown
         channel.writeKey(channelChild.getKey());
+
+        channel.checkAndSetLegalName();
+
         addListenersForTask(channelChild.setValue(channel));
         StorageDao storageDao = new StorageDao();
         if (uri==null) return;
@@ -122,10 +125,10 @@ public class ChannelDao {
                     sendFailureMessage("The channel has already been destroyed!");
                     return Transaction.success(mutableData);
                 }
-                if (channel.getExpiredTime() < System.currentTimeMillis()) {
-                    sendFailureMessage("The channel has expired!");
-                    return Transaction.success(mutableData);
-                }
+//                if (channel.getExpiredTime() < System.currentTimeMillis()) {
+//                    sendFailureMessage("The channel has expired!");
+//                    return Transaction.success(mutableData);
+//                }
                 if (channel.getMembers().containsKey(userId)) {
                     Log.d("joinChannel()", "You are already in the channel!");
                     sendSuccessMessage("You are already in the channel!");

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="channel_name_max_length">20</integer>
+    <integer name="channel_name_display_max_length">13</integer>
+</resources>
