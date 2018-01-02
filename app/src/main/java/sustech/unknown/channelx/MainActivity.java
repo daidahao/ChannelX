@@ -106,18 +106,18 @@ public class MainActivity extends AppCompatActivity {
         icon = navView.getHeaderView(0).findViewById(R.id.icon_image);
 
         navView.setCheckedItem(R.id.channels);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch(item.getItemId()){
                     case R.id.signout:
-                        navView.setCheckedItem(R.id.channels);
+                        // navView.setCheckedItem(R.id.channels);
                         signout();
                         //mDrawerLayout.closeDrawers();
                         break;
                     default:
                         mDrawerLayout.closeDrawers();
-
                 }
                 return true;
             }
@@ -276,6 +276,8 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+        navView.setCheckedItem(R.id.channels);
 
     }
 
@@ -438,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             StorageDao dao = new StorageDao();
             //Uri newUserIcon = Uri.parse( "android.resource://" + R.);
-            uri =  Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" +R.drawable.profile);
+            uri =  Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" +R.drawable.ic_face_white_48dp);
             dao.uploadUserPhoto(uri,CurrentUser.getUser().getUid());
 
             if (resultCode == RESULT_OK) {
