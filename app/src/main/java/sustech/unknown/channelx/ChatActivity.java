@@ -42,13 +42,15 @@ public class ChatActivity extends AppCompatActivity implements ReadChannelInterf
 
         // initializeChatView();
         // readChannelFromIntent(getIntent());
+        initializeChatView();
+        readChannelFromIntent(getIntent());
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        initializeChatView();
-        readChannelFromIntent(getIntent());
+
     }
 
     private void initializeChatView() {
