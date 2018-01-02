@@ -23,7 +23,9 @@ public final class Configuration {
     static final int RC_SIGN_IN = 123;
     static final int CHANNEL_SETTINGS_REQUEST = 777;
     static final int RESULT_DESTROYED = 700;
-
+     static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
+     static final int PHOTO_REQUEST_CUT = 3;// 结果
+     static final int REQUEST_QR_CODE = 1;
 
     public static final String CHANNEL_KEY_MESSAGE =
             "sustech.unknown.channelx.CHANNEL_KEY";

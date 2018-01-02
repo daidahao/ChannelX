@@ -75,9 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Uri uri;
     private CircleImageView icon;
-    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
-    private static final int PHOTO_REQUEST_CUT = 3;// 结果
-    private static final int REQUEST_QR_CODE = 1;
+
 
     private NavigationView navView;
 
@@ -221,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 //        Intent intent = new Intent(this, JoinChannelActivity.class);
 //        startActivityForResult(intent, Configuration.JOIN_CHANNEL_REQUEST);
         Intent i = new Intent(this, CaptureActivity.class);
-        this.startActivityForResult(i, REQUEST_QR_CODE);
+        this.startActivityForResult(i, Configuration.REQUEST_QR_CODE);
     }
 
     @Override
@@ -436,9 +434,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == Configuration.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
+            StorageDao dao = new StorageDao();
+            //Uri newUserIcon = Uri.parse( "android.resource://" + R.);
+            uri =  Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" +R.drawable.profile);
+            dao.uploadUserPhoto(uri,CurrentUser.getUser().getUid());
 
             if (resultCode == RESULT_OK) {
                 // clearChannelsList();
@@ -454,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (resultCode == RESULT_OK
-                && requestCode == REQUEST_QR_CODE
+                && requestCode == Configuration.REQUEST_QR_CODE
                 && data != null) {
             String result = data.getStringExtra("result");
             if (result.contains("ChannelX:")){
@@ -483,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
                 // ToastUtil.makeToast(this, "Cannot enter the channel!");
             }
         }
-        if (requestCode == PHOTO_REQUEST_GALLERY) {
+        if (requestCode == Configuration.PHOTO_REQUEST_GALLERY) {
             // 从相册返回的数据
             if (data != null) {
                 // 得到图片的全路径
@@ -512,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("noFaceDetection", true);// 取消人脸识别
         intent.putExtra("return-data", true);
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
-        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+        startActivityForResult(intent, Configuration.PHOTO_REQUEST_CUT);
 
     }
 
@@ -545,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
-        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+        startActivityForResult(intent, Configuration.PHOTO_REQUEST_GALLERY);
     }
 
     public void removeChannel(Channel channel) {
