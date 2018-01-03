@@ -144,7 +144,11 @@ public class ChannelDao {
                                         String.format("%03d", channel.getMemberCount() + 1)));
                     }
                 } else {
-                    member = new Member(trueName);
+                    if (trueName.isEmpty()) {
+                        member = new Member("MEMBER" + (channel.getMemberCount() + 1));
+                    } else {
+                        member = new Member(trueName);
+                    }
                     member.setInfo(contactInfo);
                 }
                 Log.d("joinChannel()", "You're added into the member list!");
