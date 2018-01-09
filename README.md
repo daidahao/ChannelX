@@ -37,9 +37,9 @@ Specifically, if you want to use `ChannelX` in China, as `ChannelX` is heavily d
 
 #### 4. Join and Share a Channel via QR code
 
-Click the "Scan" ![](image/scan.png) icon at the right-top of the `MainActivity`.
+Click the "Scan" <img src="image/scan.png" width="30px"/> icon at the right-top of the `MainActivity`.
 
-Click the QR Code icon ![](image/qr.png) in the Group Settings to share the QR code of the channel.
+Click the QR Code icon <img src="image/qr.png" width="30px"/>  in the Group Settings to share the QR code of the channel.
 
 #### 5. Send Texts through a Channel
 
@@ -55,6 +55,6 @@ Click the QR Code icon ![](image/qr.png) in the Group Settings to share the QR c
 
 #### 8. Leave or Destroy a Channel
 
-Click "LEAVE THE CHANNEL" or "DESTROY THE CHANNEL" in the Group Settings to leave or destroy the channel.
+Click `LEAVE THE CHANNEL` or `DESTROY THE CHANNEL` in the Group Settings to leave or destroy the channel.
 
 <img src="image/group-settings-2.png" width="300px"/>
