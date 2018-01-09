@@ -14,47 +14,47 @@ Specifically, if you want to use `ChannelX` in China, as `ChannelX` is heavily d
 
 ### Managing User Profile
 
-1. Sign up with Email or Phone
+#### 1. Sign up with Email or Phone
 
-![](image/signup.png)
+<img src="image/signup.png" style="width: 300px;"/>
 
-2. Change Profile Photo
+#### 2. Change Profile Photo
 
-![](image/profile.png)
+<img src="image/profile.png" style="width: 300px;"/>
 
-3. Sign Out
+#### 3. Sign Out
 
 ### IM based on Channels
 
-1. Create a Onymous / Anonymous Channel
+#### 1. Create a Onymous / Anonymous Channel
 
-![](image/anonymous.png)
+<img src="image/anonymous.png" style="width: 300px;"/>
 
-2. Create a Transient / Permanent Channel
-3. Create a Channel with Schedule
+#### 2. Create a Transient / Permanent Channel
+#### 3. Create a Channel with Schedule
 
-![](image/transient.png)
+<img src="image/transient.png" style="width: 300px;"/>
 
-4. Join and Share a Channel via QR code
+#### 4. Join and Share a Channel via QR code
 
 Click the "Scan" ![](image/scan.png) icon at the right-top of the `MainActivity`.
 
 Click the QR Code icon ![](image/qr.png) in the Group Settings to share the QR code of the channel.
 
-5. Send Texts through a Channel
+#### 5. Send Texts through a Channel
 
-![](image/text.png)
+<img src="image/text.png" style="width: 300px;"/>
 
-6. Show Group Settings
+#### 6. Show Group Settings
 
-![](image/group-settings.png)
+<img src="image/group-settings.png" style="width: 300px;"/>
 
-7. Show Members List of a Channel
+#### 7. Show Members List of a Channel
 
-![](image/members.png)
+<img src="image/members.png" style="width: 300px;"/>
 
-8. Leave or Destroy a Channel
+#### 8. Leave or Destroy a Channel
 
 Click "LEAVE THE CHANNEL" or "DESTROY THE CHANNEL" in the Group Settings to leave or destroy the channel.
 
-![](image/group-settings-2.png)
+<img src="image/group-settings-2.png" style="width: 300px;"/>
