@@ -43,7 +43,7 @@ Click the QR Code icon ![](image/qr.png) in the Group Settings to share the QR c
 
 #### 5. Send Texts through a Channel
 
-<img src="image/text.png" style="width: 300px;"/>
+<img src="image/text.png" width="200px"/>
 
 #### 6. Show Group Settings
 
