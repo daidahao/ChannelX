@@ -2,6 +2,10 @@
 
 A transient, anonymous channel-based instant communication application running on Android.
 
+## Latest Release
+
+ChannelX 0.1.6 [Download](https://github.com/daidahao/ChannelX/releases/download/v0.1.6/channelx-0.1.6.apk)
+
 ## Requirements
 
 To run `ChannelX`, you need an Android device running Android 4.4 higher and Google services 11.8.0 or higher.
