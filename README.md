@@ -62,3 +62,13 @@ Click the QR Code icon <img src="image/qr.png" width="30px"/>  in the Group Sett
 Click `LEAVE THE CHANNEL` or `DESTROY THE CHANNEL` in the Group Settings to leave or destroy the channel.
 
 <img src="image/group-settings-2.png" width="300px"/>
+
+## Contributors
+
+`ChannelX` would have never been made without these great teammates.
+
+- Product Manager [daidahao](https://github.com/daidahao)
+- Technical Director [Shen](https://github.com/ShenChuanfu)
+- Client Programmer [RandoChoi](https://github.com/RandoChoi)
+- Server Programmer [Sean](https://github.com/liuzixiaosz)
+- UI Design [Audrey](https://github.com/11510746)
